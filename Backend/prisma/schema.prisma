@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  firstname String
+  lastname  String
+  email     String @unique
+
+  password String?
+  role     Role    @default(USER)
+
+  googleId String?
+
+  phone         String?
+  phoneVerified Boolean @default(false)
+
+  profile   Profile?
+  interests UserInterest[]
+
+  attendees EventParticipant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+
+  profilePic String?
+
+  latitude  Float?
+  longitude Float?
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Interest {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  users UserInterest[]
+}
+
+model UserInterest {
+  userId     Int
+  interestId Int
+
+  user     User     @relation(fields: [userId], references: [id])
+  interest Interest @relation(fields: [interestId], references: [id])
+
+  @@id([userId, interestId])
+}
+
+model Event {
+  id Int @id @default(autoincrement())
+
+  title       String
+  description String
+
+  category String
+
+  Eventlocation String
+
+  latitude  Float?
+  longitude Float?
+
+  eventStartDate String
+  eventEndDate   String
+
+  image String?
+
+  isArchive    Boolean            @default(false)
+  participants EventParticipant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//Junction table for Many to Many relationship b/w user and event table
+model EventParticipant {
+  userId  Int
+  eventId Int
+
+  isArchive Boolean  @default(false)
+  joinedAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@id([userId, eventId])
+}

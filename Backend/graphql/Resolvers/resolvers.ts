@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
-import { context, isAdmin, isAuth, mergedDateTime } from "../context";
+import { context, isAdmin, isAuth } from "../context";
 import {
   accessCookieOptions,
   refreshCookieOptions,
@@ -13,37 +13,73 @@ import {
 } from "../../lib/jwtCookie";
 import { getTwilioClient, isValidPhone } from "../../lib/twilio";
 import { OAuth2Client } from "google-auth-library";
-import { GraphQLError } from "graphql/error";
+import { DateTimeResolver } from "graphql-scalars";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const resolvers = {
+  DateTime: DateTimeResolver,
+
+  //field resolver
+  Event: {
+    attendeeCount: async (parent: { id: number }, _: unknown, ctx: context) => {
+      console.log("Field resolver i.e Event called : ");
+      return await prisma.eventParticipant.count({
+        where: { eventId: parent.id, isArchive: false },
+      });
+    },
+  },
+
   Query: {
     currentUser: async (_parent: unknown, _args: unknown, ctx: context) => {
-      if (!ctx.userId) {
-        throw new Error("Not authenticated - Login first");
-      }
-      console.log("The admin have the role is : ", ctx.role);
-
-      try {
-        console.log("ctx.userId : ", ctx.userId);
-        if (!ctx.userId) {
-          throw new GraphQLError("Not authenticated — please log in first", {
-            extensions: {
-              code: "UNAUTHENTICATED",
-            },
-          });
-        }
-        return prisma.user.findUnique({
-          where: { id: ctx.userId },
-        });
-      } catch (error) {
-        console.log("error in currentUser : ", error);
-        throw error;
-      }
+      isAuth(ctx);
+      return prisma.user.findUnique({
+        where: { id: ctx.userId! },
+        include: { profile: true, interests: { include: { interest: true } } },
+      });
     },
-    getEvents: async (_: unknown, __: unknown, ctx: context) => {
+    getUserProfile: async (_: any, args: { userId: string }, ctx: context) => {
+      isAuth(ctx);
+      return prisma.profile.findUnique({
+        where: { userId: Number(args.userId) },
+        include: { user: true },
+      });
+    },
+
+    getAllInterests: async () => {
+      return prisma.interest.findMany({ orderBy: { name: "asc" } });
+    },
+
+    getEvents: async (
+      _: unknown,
+      args: {
+        category?: string;
+        search?: string;
+        fromDate?: string;
+        toDate?: string;
+      },
+      ctx: context,
+    ) => {
       return await prisma.event.findMany({
+        where: {
+          isArchive: false,
+          ...(args.category && { category: args.category }),
+
+          ...(args.search && {
+            OR: [
+              { title: { contains: args.search, mode: "insensitive" } },
+              { description: { contains: args.search, mode: "insensitive" } },
+              { Eventlocation: { contains: args.search, mode: "insensitive" } },
+            ],
+          }),
+
+          ...(args.fromDate && {
+            eventStartDate: { gte: new Date(args.fromDate) },
+          }),
+          ...(args.toDate && {
+            eventEndDate: { lte: new Date(args.toDate) },
+          }),
+        },
         include: {
           participants: {
             include: { user: true },
@@ -62,14 +98,14 @@ export const resolvers = {
           },
         },
       });
-
       if (!event) throw new Error("Event not found");
-
       return event;
     },
 
+    //nearByEvents
+
     userJoinedEvents: async (_: unknown, __: unknown, ctx: context) => {
-      isAdmin(ctx);
+      isAuth(ctx);
 
       const participations = await prisma.eventParticipant.findMany({
         where: { userId: ctx.userId! },
@@ -91,7 +127,7 @@ export const resolvers = {
       args: { eventId: string },
       ctx: context,
     ) => {
-      isAdmin(ctx);
+      isAuth(ctx);
 
       const participants = await prisma.eventParticipant.findMany({
         where: { eventId: Number(args.eventId) },
@@ -99,6 +135,21 @@ export const resolvers = {
       });
 
       return participants.map((p) => p.user);
+    },
+
+    adminGetUsers: async (_: any, __: unknown, ctx: context) => {
+      isAdmin(ctx);
+      return prisma.user.findMany({
+        include: { profile: true },
+        orderBy: { createdAt: "desc" },
+      });
+    },
+    adminGetEvents: async (_: any, __: any, ctx: context) => {
+      isAdmin(ctx);
+      return prisma.event.findMany({
+        include: { participants: true },
+        orderBy: { createdAt: "desc" },
+      });
     },
   },
   Mutation: {
@@ -404,6 +455,90 @@ export const resolvers = {
       return true;
     },
 
+    //Auth
+    updateProfile: async (
+      _: unknown,
+      args: {
+        latitude?: number;
+        longitude?: number;
+        bio?: string;
+        profilePic?: string;
+      },
+      ctx: context,
+    ) => {
+      try {
+        isAuth(ctx);
+
+        const existingProfile = await prisma.profile.findUnique({
+          where: { userId: ctx.userId! },
+        });
+
+        if (!existingProfile) {
+          await prisma.profile.create({
+            data: { userId: ctx.userId! },
+          });
+        }
+
+        return await prisma.profile.update({
+          where: { userId: ctx.userId! },
+          data: {
+            ...(args.latitude !== undefined && { latitude: args.latitude }),
+            ...(args.longitude !== undefined && { longitude: args.longitude }),
+            ...(args.bio !== undefined && { bio: args.bio }),
+            ...(args.profilePic && { profilePic: args.profilePic }),
+          },
+          include: { user: true },
+        });
+      } catch (error) {
+        console.error("update profile error : ", error);
+
+        throw new Error("Error in update profile ");
+      }
+    },
+    deleteProfile: async (_: unknown, __: unknown, ctx: context) => {
+      isAuth(ctx);
+
+      const existingProfile = await prisma.profile.findUnique({
+        where: { userId: ctx.userId! },
+      });
+
+      if (!existingProfile) throw new Error("Profile not found");
+
+      await prisma.profile.delete({
+        where: { userId: ctx.userId! },
+      });
+
+      return true;
+    },
+
+    //Interest
+    addInterest: async (_: any, args: { interestId: string }, ctx: context) => {
+      isAuth(ctx);
+      return prisma.userInterest.create({
+        data: {
+          userId: ctx.userId!,
+          interestId: Number(args.interestId),
+        },
+        include: { user: true, interest: true },
+      });
+    },
+    removeInterest: async (
+      _: any,
+      args: { interestId: string },
+      ctx: context,
+    ) => {
+      isAuth(ctx);
+      await prisma.userInterest.delete({
+        where: {
+          userId_interestId: {
+            userId: ctx.userId!,
+            interestId: Number(args.interestId),
+          },
+        },
+      });
+      return true;
+    },
+
     //ADMIN
     createEvent: async (
       _parent: unknown,
@@ -414,22 +549,18 @@ export const resolvers = {
         Eventlocation: string;
         latitude: number;
         longitude: number;
-        startDate: string;
-        endDate: string;
-        startTime: string;
-        endTime: string;
+        eventStartDate: string;
+        eventEndDate: string;
         image?: string;
       },
       ctx: context,
     ) => {
       isAdmin(ctx);
-      console.log("start date : ", args.startDate); //2026-06-18
-      console.log("start time : ", args.startTime); //18:05
 
-      const eventStartDate = mergedDateTime(args.startDate, args.startTime);
-      const eventEndDate = mergedDateTime(args.endDate, args.endTime);
+      const eventStartDate = new Date(args.eventStartDate);
+      const eventEndDate = new Date(args.eventEndDate);
 
-      if (new Date(eventEndDate) <= new Date(eventStartDate)) {
+      if (eventEndDate <= eventStartDate) {
         throw new Error("End date/time must be after start date/time");
       }
 
@@ -445,6 +576,7 @@ export const resolvers = {
           eventStartDate,
           eventEndDate,
         },
+        include: { participants: true },
       });
     },
     updateEvent: async (
@@ -457,10 +589,8 @@ export const resolvers = {
         Eventlocation: string;
         latitude: number;
         longitude: number;
-        startDate: string;
-        endDate: string;
-        startTime: string;
-        endTime: string;
+        eventStartDate: string;
+        eventEndDate: string;
       },
       ctx: context,
     ) => {
@@ -472,24 +602,14 @@ export const resolvers = {
 
       if (!event) throw new Error("Event not found");
 
-      // Only recompute dates if both date AND time are provided together
-      const hasStart = args.startDate && args.startTime;
-      const hasEnd = args.endDate && args.endTime;
+      const startDate = args.eventStartDate;
+      const endDate = args.eventEndDate;
 
-      const eventStartDate = hasStart
-        ? mergedDateTime(args.startDate!, args.startTime!)
-        : undefined;
-
-      const eventEndDate = hasEnd
-        ? mergedDateTime(args.endDate!, args.endTime!)
-        : undefined;
-
-      if (eventStartDate && eventEndDate) {
-        if (new Date(eventEndDate) <= new Date(eventStartDate)) {
+      if (startDate && endDate) {
+        if (new Date(startDate) <= new Date(endDate)) {
           throw new Error("End date/time must be after start date/time");
         }
       }
-
       return await prisma.event.update({
         where: { id: Number(args.eventId) },
         data: {
@@ -499,8 +619,8 @@ export const resolvers = {
           latitude: args.latitude,
           longitude: args.longitude,
           category: args.category,
-          ...(eventStartDate && { eventStartDate }),
-          ...(eventEndDate && { eventEndDate }),
+          ...(startDate && { eventStartDate: startDate }),
+          ...(endDate && { eventEndDate: endDate }),
         },
       });
     },
@@ -560,7 +680,11 @@ export const resolvers = {
         },
       });
     },
-    archiveEvent: async (_: unknown, args: { eventId: string }, ctx: context) => {
+    archiveEvent: async (
+      _: unknown,
+      args: { eventId: string },
+      ctx: context,
+    ) => {
       // isAdmin(ctx);
       isAuth(ctx);
 
@@ -601,69 +725,6 @@ export const resolvers = {
       }
 
       return true;
-    },
-
-    //Auth
-    updateProfile: async (
-      _: unknown,
-      args: {
-        latitude?: number;
-        longitude?: number;
-      },
-      ctx: context,
-    ) => {
-      try {
-        isAuth(ctx);
-
-        const existingProfile = await prisma.profile.findUnique({
-          where: { userId: ctx.userId! },
-        });
-
-        if (!existingProfile) {
-          await prisma.profile.create({
-            data: { userId: ctx.userId! },
-          });
-        }
-
-        return await prisma.profile.update({
-          where: { userId: ctx.userId! },
-          data: {
-            ...(args.latitude !== undefined && { latitude: args.latitude }),
-            ...(args.longitude !== undefined && { longitude: args.longitude }),
-          },
-          include: { user: true },
-        });
-      } catch (error) {
-        console.error("update profile error : ", error);
-
-        throw new Error("Error in update profile ");
-      }
-    },
-    deleteProfile: async (_: unknown, __: unknown, ctx: context) => {
-      isAuth(ctx);
-
-      const existingProfile = await prisma.profile.findUnique({
-        where: { userId: ctx.userId! },
-      });
-
-      if (!existingProfile) throw new Error("Profile not found");
-
-      await prisma.profile.delete({
-        where: { userId: ctx.userId! },
-      });
-
-      return true;
-    },
-  },
-
-  //field resolver
-  Event: {
-    attendeeCount: async (parent: { id: number }, _: unknown, ctx: context) => {
-      console.log("Field resolver i.e Event called : ");
-
-      return await prisma.eventParticipant.count({
-        where: { eventId: parent.id },
-      });
     },
   },
 };

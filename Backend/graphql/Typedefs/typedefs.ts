@@ -3,6 +3,13 @@ enum Role{
     ADMIN
     USER
 }
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+scalar DateTime
 # User
 type User{
     id:ID!
@@ -16,6 +23,9 @@ type User{
 
     phone:String
     phoneVerified:Boolean
+    isActive: Boolean
+
+    profile:Profile
 
     interests:[UserInterest]
     attendees:[EventParticipant]
@@ -24,14 +34,16 @@ type User{
     updatedAt:String
 }
 
-type Prfile{
+type Profile{
     id:ID!
     profilePic:String
+    bio:String
 
     latitude:Float
     logitude:Float
 
     userId:Int!
+    user: User!
 
     createdAt:String!
     updatedAt:String!
@@ -41,13 +53,12 @@ type Interest{
     id:ID!
     name:String!
 }
-
+# Junction table
 type UserInterest{
     userId:Int!
     interestId:Int!
 
     user: User!
-
     interest:Interest!
 }
 # Auth Response
@@ -72,13 +83,16 @@ type Event {
   latitude: Float
   longitude: Float
 
-  eventStartDate: String!
-  eventEndDate: String!
+#   eventStartDate: String!
+#   eventEndDate: String!
+  eventStartDate:DateTime!
+  eventEndDate:DateTime!
  
   image: String
   attendeeCount:Int!
-  
   isArchive: Boolean!
+
+  distance: Float
   participants: [EventParticipant!]
  
   createdAt: String!
@@ -94,17 +108,42 @@ type EventParticipant {
   event:Event!
 }
 
+type Message{
+    id: ID!
+    content:String!
+    status:MessageStatus!
+    senderId:Int!
+    receivedId:Int!
+    sender:User!
+    receiver:User!
+    createdAt:String!
+}
 
 type Query{
     currentUser:User!
 
-    # Events
-    getEvents: [Event!]!
+    getUserProfile(userId:ID!):Profile
+
+    getAllInterests:[Interest!]!
+
+
+    # getEvents: [Event!]!
+    getEvents(category:String, search:String,fromDate:String,toDate:String):[Event!]!
     getEvent(eventId:ID!):Event
+
+    nearbyEvents(latitude:Float! longitude:Float! radiusKm:Float! category:String):[Event!]!
 
     #Events - authenticated user will access
     userJoinedEvents:[Event]!
     eventParticipants(eventId:ID!):[User!]!
+
+    # Chats
+    getMessages(receiverId:Int!):[Message] #return array of message objects
+
+
+    #Admin 
+    adminGetUsers(page:Int,limit:Int):[User!]!
+    adminGetEvents: [Event!]!
 }
 
 type Mutation{
@@ -119,18 +158,27 @@ type Mutation{
 
 
     # update Profile
-    updateProfile(latitude:Float!,longitude:Float!):Prfile!
+    updateProfile(latitude:Float!,longitude:Float!,bio:String!,profilePic:String!):Profile!
     deleteProfile:Boolean!
+
+    #Interests
+    addInterest(interestId:ID!):UserInterest!
+    removeInterest(interestId:ID!):Boolean!
 
 
     # Events - ADMIN create only
-    createEvent( title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,startDate:String!,endDate:String!,startTime:String!,endTime:String!,image:String!): Event!
+    createEvent( title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String!,eventEndDate:String!,image:String): Event!
 
-    updateEvent(eventId:ID!, title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,startDate:String!,endDate:String!,startTime:String!,endTime:String!): Event!
+    updateEvent(eventId:ID!, title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String!,eventEndDate:String!,image:String): Event!
     deleteEvent(eventId:ID!):Boolean!
 
     # Events - authenticated USER
     joinEvent(eventId:ID!):EventParticipant!
+    leaveEvent(eventId:ID!):Boolean!
     archiveEvent(eventId:ID!):Boolean!
+
+    #Message
+    sendMessage(content:String!,receiverId:Int!):Message!
+    markMessageRead(fromUserId:ID!):Boolean!
 }
 `;

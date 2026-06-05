@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -12,101 +7,84 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 model User {
-  id        Int    @id @default(autoincrement())
-  firstname String
-  lastname  String
-  email     String @unique
-
-  password String?
-  role     Role    @default(USER)
-
-  googleId String?
-
+  id            Int                @id @default(autoincrement())
+  firstname     String
+  lastname      String
+  email         String             @unique
+  password      String?
+  role          Role               @default(USER)
+  createdAt     DateTime           @default(now())
+  googleId      String?
   phone         String?
-  phoneVerified Boolean @default(false)
-
-  profile   Profile?
-  interests UserInterest[]
-
-  attendees EventParticipant[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  phoneVerified Boolean            @default(false)
+  updatedAt     DateTime           @updatedAt
+  attendees     EventParticipant[]
+  profile       Profile?
+  interests     UserInterest[]
 }
 
 model Profile {
-  id Int @id @default(autoincrement())
-
+  id         Int      @id @default(autoincrement())
   profilePic String?
-
-  latitude  Float?
-  longitude Float?
-
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  latitude   Float?
+  longitude  Float?
+  userId     Int      @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Interest {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-
+  id    Int            @id @default(autoincrement())
+  name  String         @unique
   users UserInterest[]
 }
 
 model UserInterest {
   userId     Int
   interestId Int
-
-  user     User     @relation(fields: [userId], references: [id])
-  interest Interest @relation(fields: [interestId], references: [id])
+  interest   Interest @relation(fields: [interestId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 
   @@id([userId, interestId])
 }
 
 model Event {
-  id Int @id @default(autoincrement())
-
-  title       String
-  description String
-
-  category String
-
-  Eventlocation String
-
-  latitude  Float?
-  longitude Float?
-
-  eventStartDate String
-  eventEndDate   String
-
-  image String?
-
-  isArchive    Boolean            @default(false)
-  participants EventParticipant[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int                @id @default(autoincrement())
+  title          String
+  description    String
+  category       String
+  latitude       Float?
+  longitude      Float?
+  eventStartDate DateTime
+  eventEndDate   DateTime
+  image          String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  Eventlocation  String
+  isArchive      Boolean            @default(false)
+  participants   EventParticipant[]
 }
 
-//Junction table for Many to Many relationship b/w user and event table
 model EventParticipant {
-  userId  Int
-  eventId Int
-
-  isArchive Boolean  @default(false)
+  userId    Int
+  eventId   Int
   joinedAt  DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
+  isArchive Boolean  @default(false)
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@id([userId, eventId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
 }

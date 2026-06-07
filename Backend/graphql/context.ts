@@ -2,19 +2,23 @@ import { Request, Response } from "express";
 import { verifyAccessToken } from "../lib/jwtCookie";
 import { Role, User } from "../generated/prisma/client";
 import { GraphQLError } from "graphql";
+import { Server } from "socket.io";
 
 export type context = {
   userId: number | null;
   req: Request;
   res: Response;
   role: Role;
+  io: Server;
 };
 export const checkAuth = async ({
   req,
   res,
+  io,
 }: {
   req: Request;
   res: Response;
+  io: Server;
 }): Promise<context> => {
   console.log("CheckAuth called ");
   console.log("accessToken ", req.cookies?.accessToken);
@@ -31,7 +35,7 @@ export const checkAuth = async ({
       userId = null;
     }
   }
-  return { req, res, userId, role };
+  return { req, res, userId, role, io };
 };
 
 export const isAuth = (ctx: context) => {
@@ -39,7 +43,7 @@ export const isAuth = (ctx: context) => {
     throw new GraphQLError("Not authenticated — please log in first", {
       extensions: {
         code: "UNAUTHENTICATED",
-        http:{status:401}
+        http: { status: 401 },
       },
     });
   }

@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.bodyCon {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 33px 0px;
+}
+.container {
+  width: 70vw;
+}
+
+.loading {
+  width: 100vw;
+  height: 90vh;
+  display: grid;
+  place-items: center;
+}
+
+.navlinkStyle {
+  text-decoration: none;
+  color: rgb(47, 45, 45);
+}
+.detailIcon {
+  font-size: 18px;
+  color: #3b5bdb;
+  margin-top: 2px;
+  flex-shrink: 0;
+}

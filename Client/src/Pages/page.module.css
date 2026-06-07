@@ -1,0 +1,117 @@
+.eventTitle {
+  font-weight: 400;
+}
+.eventCon {
+  width: 100%;
+  box-shadow:
+    rgba(0, 0, 0, 0.16) 0px 3px 6px,
+    rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  padding: 25px;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #ffffff;
+}
+.searchIcon {
+  font-size: 20px;
+}
+.serachNear {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  /* padding: 10px; */
+  font-size: 16px;
+}
+.searchInput {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid rgb(193, 185, 185);
+  padding: 10px 12px;
+  border-radius: 5px;
+}
+.serachBtn {
+  padding: 10px;
+  background-color: #2363f8;
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100px;
+  display: flex;
+  gap: 5px;
+  cursor: pointer;
+}
+.serachBtn:hover {
+  background-color: #0f48cd;
+}
+.searchInput input {
+  width: 100%;
+  outline: none;
+  border: none;
+  font-size: 18px;
+}
+.filterSec {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.filterBlock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.filterCon {
+  padding: 8px 12px;
+  font-size: 16px;
+}
+
+.eventCartCon {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 30px;
+}
+.datetimeCon {
+  display: flex;
+  justify-content: space-between;
+}
+.datetime {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.eventCartBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  box-shadow:
+    rgba(0, 0, 0, 0.16) 0px 3px 6px,
+    rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+.eventCartBlocktext {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+.titleDis {
+  display: flex;
+  justify-content: space-between;
+}
+.textCon {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.eventCartBlock:hover {
+  transform: scale(1.05);
+}
+.eventCartBlock img {
+  width: 100%;
+  height: auto;
+}

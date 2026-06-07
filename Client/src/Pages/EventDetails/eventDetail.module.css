@@ -1,0 +1,187 @@
+.wrapper {
+  margin: 0 auto;
+  padding: 24px 20px;
+  background: #f5f5f5;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
+  border-radius: 20px;
+  padding-bottom: 20px;
+  margin-top: 25px;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  padding: 0;
+  color: #175dfc;
+}
+
+.back:hover {
+  color: #1a1a2e;
+}
+
+.heroWrap {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 20px;
+
+}
+
+.heroImg {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.category {
+  background: #e8f0fe;
+  color: #3b5bdb;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.joinBtn {
+  background: #3b5bdb;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.joinBtn:hover {
+  background: #2f4ac0;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 24px;
+}
+
+.infoRow {
+        display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.detailIcon {
+  font-size: 18px;
+  color: #3b5bdb;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.detailLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 2px 0;
+}
+.eventDates{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+.eventDates div{
+    font-size: 18px;
+}
+.endDate{
+    border-left: 2px solid rgb(105, 101, 101);
+    padding-left: 10px;
+}
+.detailValue {
+  font-size: 14px;
+  color: #444;
+  margin: 0;
+}
+
+.detailSub {
+  font-size: 12px;
+  color: #3b5bdb;
+  margin: 2px 0 0 0;
+}
+
+.mapBox {
+  flex-shrink: 0;
+  background: #e9ecef;
+  border-radius: 12px;
+  height:250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mapIcon {
+  font-size: 36px;
+  color: #555;
+}
+
+.mapLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.mapCoords {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.divider {
+  height: 1px;
+  background: #ddd;
+  margin-bottom: 24px;
+}
+
+.aboutTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+}
+
+.aboutText {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
+}

@@ -3,11 +3,6 @@ enum Role{
     ADMIN
     USER
 }
-enum MessageStatus {
-  SENT
-  DELIVERED
-  READ
-}
 
 scalar DateTime
 # User
@@ -40,7 +35,7 @@ type Profile{
     bio:String
 
     latitude:Float
-    logitude:Float
+    longitude:Float
 
     userId:Int!
     user: User!
@@ -111,11 +106,8 @@ type EventParticipant {
 type Message{
     id: ID!
     content:String!
-    status:MessageStatus!
     senderId:Int!
     receivedId:Int!
-    sender:User!
-    receiver:User!
     createdAt:String!
 }
 
@@ -131,7 +123,7 @@ type Query{
     getEvents(category:String, search:String,fromDate:String,toDate:String):[Event!]!
     getEvent(eventId:ID!):Event
 
-    nearbyEvents(latitude:Float! longitude:Float! radiusKm:Float! category:String):[Event!]!
+    nearbyEvents(latitude:Float! longitude:Float! radiusKm:Float! category:String):[Event!]!    
 
     #Events - authenticated user will access
     userJoinedEvents:[Event]!
@@ -139,7 +131,6 @@ type Query{
 
     # Chats
     getMessages(receiverId:Int!):[Message] #return array of message objects
-
 
     #Admin 
     adminGetUsers(page:Int,limit:Int):[User!]!
@@ -156,9 +147,8 @@ type Mutation{
     logOut:Boolean
 
 
-
     # update Profile
-    updateProfile(latitude:Float!,longitude:Float!,bio:String!,profilePic:String!):Profile!
+    updateProfile(latitude:Float,longitude:Float,bio:String,profilePic:String):Profile!
     deleteProfile:Boolean!
 
     #Interests
@@ -179,6 +169,5 @@ type Mutation{
 
     #Message
     sendMessage(content:String!,receiverId:Int!):Message!
-    markMessageRead(fromUserId:ID!):Boolean!
 }
 `;

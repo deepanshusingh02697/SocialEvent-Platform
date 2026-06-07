@@ -1,0 +1,57 @@
+.popupCon {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: rgba(200, 196, 196, 0.8);
+  display: grid;
+  place-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+.popup {
+  border-radius: "20px";
+  width: 450px;
+  background-color: #ffffff;
+  font-size: 18px;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+}
+
+.boxes {
+  margin: 10px 0px;
+  display: flex;
+  gap: 15px;
+}
+.boxes input {
+  width: 50px;
+  /* height: 40px; */
+  height: auto;
+  padding:14px 10px;
+  background-color: #d5d7db;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+}
+.otpCon {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.submitOTP {
+  display: grid;
+  place-items: center;
+}
+.submitOTP button {
+  background-color: #4690e5;
+  color: #ecf1f9;
+  padding: 10px 20px;
+  font-size: large;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}

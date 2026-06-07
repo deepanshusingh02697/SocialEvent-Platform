@@ -22,11 +22,15 @@ model User {
   attendees     EventParticipant[]
   profile       Profile?
   interests     UserInterest[]
+
+  sentMessages    Message[] @relation("sentMessages")
+  receiveMessages Message[] @relation("receiveMessages")
 }
 
 model Profile {
   id         Int      @id @default(autoincrement())
   profilePic String?
+  bio        String?
   latitude   Float?
   longitude  Float?
   userId     Int      @unique
@@ -83,8 +87,14 @@ enum Role {
   ADMIN
 }
 
-enum MessageStatus {
-  SENT
-  DELIVERED
-  READ
+model Message {
+  id      Int    @id @default(autoincrement())
+  content String
+
+  senderId   Int
+  receiverId Int
+
+  sender    User     @relation("sentMessages", fields: [senderId], references: [id])
+  receiver  User     @relation("receiveMessages", fields: [receiverId], references: [id])
+  createdAt DateTime @default(now())
 }

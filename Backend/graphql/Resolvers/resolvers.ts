@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
-import { context, isAdmin, isAuth } from "../context";
+import { context, isAdmin, isAuth, twoUserRoomId } from "../context";
 import {
   accessCookieOptions,
   refreshCookieOptions,
@@ -102,8 +102,9 @@ export const resolvers = {
       return event;
     },
 
-    //nearByEvents
+    // nearByEvents
 
+    //admin
     userJoinedEvents: async (_: unknown, __: unknown, ctx: context) => {
       isAuth(ctx);
 
@@ -448,7 +449,7 @@ export const resolvers = {
     },
     logOut: async (_parent: unknown, _args: unknown, ctx: context) => {
       if (!ctx.userId) {
-        throw new Error("Not authenticated - Login first in logout mutation");
+        throw new Error("Not authenticated - Login first to logout mutation");
       }
       ctx.res.clearCookie("accessToken", accessCookieOptions);
       ctx.res.clearCookie("refreshToken", refreshCookieOptions);
@@ -723,8 +724,52 @@ export const resolvers = {
           },
         });
       }
-
       return true;
+    },
+    leaveEvent: async (_: unknown, args: { eventId: string }, ctx: context) => {
+      try {
+        isAuth(ctx);
+        const event = await prisma.event.findUnique({
+          where: { id: Number(args.eventId) },
+        });
+        if (!event) throw new Error("Event not found");
+        const res = await prisma.eventParticipant.delete({
+          where: {
+            userId_eventId: {
+              userId: ctx.userId!,
+              eventId: Number(args.eventId),
+            },
+          },
+        });
+        if (!res) {
+          throw new Error("Event not found to leave");
+        }
+        return true;
+      } catch (error) {
+        console.log("error is: ", error);
+        throw error;
+      }
+    },
+    sendMessage: async (
+      _parent: unknown,
+      args: { content: string; receiverId: number },
+      ctx: context,
+    ) => {
+      if (!ctx.userId) {
+        throw new Error("Not authenticated for sending messages");
+      }
+      const message = await prisma.message.create({
+        data: {
+          content: args.content,
+          senderId: ctx.userId,
+          receiverId: args.receiverId,
+        },
+        include: { sender: true },
+      });
+      console.log("message is: ", message);
+      const roomId = twoUserRoomId<number>(ctx.userId, args.receiverId);
+      ctx.io.to(roomId).emit("newRoomMessage", message);
+      return { message };
     },
   },
 };

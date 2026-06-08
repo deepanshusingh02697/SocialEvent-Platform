@@ -11,32 +11,27 @@ export type context = {
   role: Role;
   io: Server;
 };
-export const checkAuth = async ({
-  req,
-  res,
-  io,
-}: {
-  req: Request;
-  res: Response;
-  io: Server;
-}): Promise<context> => {
-  console.log("CheckAuth called ");
-  console.log("accessToken ", req.cookies?.accessToken);
-  let userId: number | null = null;
-  let role: Role = "USER";
-  const accessToken = req.cookies.accessToken;
+//Apollo only passes {req,res} to context functions - io must come via closure
+export const createCheckAuth =
+  (io: Server) =>
+  async ({ req, res }: { req: Request; res: Response }): Promise<context> => {
+    console.log("CheckAuth called ");
+    console.log("accessToken ", req.cookies?.accessToken);
+    let userId: number | null = null;
+    let role: Role = "USER";
+    const accessToken = req.cookies.accessToken;
 
-  if (accessToken) {
-    try {
-      const decoded = verifyAccessToken(accessToken);
-      userId = decoded.userId;
-      role = decoded.role;
-    } catch (error) {
-      userId = null;
+    if (accessToken) {
+      try {
+        const decoded = verifyAccessToken(accessToken);
+        userId = decoded.userId;
+        role = decoded.role;
+      } catch (error) {
+        userId = null;
+      }
     }
-  }
-  return { req, res, userId, role, io };
-};
+    return { req, res, userId, role, io };
+  };
 
 export const isAuth = (ctx: context) => {
   if (!ctx.userId) {

@@ -121,7 +121,40 @@ export interface GET_ATTENDITES_ChatPopup_Interface {
       firstname: string;
       id: string;
       profile: string;
-      email:string;
+      email: string;
+    },
+  ];
+}
+
+export interface Post_Message_Interface {
+  sendMessage: {
+    id: number;
+    receiverId: number;
+    senderId: number;
+    sender: {
+      email: string;
+      role: string;
+    };
+    content: string;
+  };
+}
+export interface Get_Message_Interface {
+  getMessages: [
+    {
+      id: number;
+      content: string;
+      senderId: number;
+      createdAt: string;
+      receiver: {
+        firstname: string;
+        isActive: boolean;
+        id: string;
+      };
+      sender: {
+        firstname: string;
+        id: string;
+      };
+      receiverId: number;
     },
   ];
 }

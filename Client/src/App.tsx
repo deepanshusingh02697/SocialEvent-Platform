@@ -8,7 +8,7 @@ import Profile from "./Component/Profile/Profile";
 import EventDetails from "./Pages/EventDetails/EventDetails";
 import ChatDetails from "./Component/ChatComp/ChatDetails";
 import HomeEvent from "./Pages/HomeEvent";
-import './App.css'
+import "./App.css";
 import PublicRoute from "./Component/PublicProtectedRoute/PublicRoute";
 
 export default function App() {

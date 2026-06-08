@@ -101,7 +101,23 @@ export const resolvers = {
       if (!event) throw new Error("Event not found");
       return event;
     },
-
+    getMessages: async (
+      _: unknown,
+      args: { receiverId: number },
+      ctx: context,
+    ) => {
+      isAuth(ctx);
+      return prisma.message.findMany({
+        where: {
+          OR: [
+            { senderId: ctx.userId!, receiverId: args.receiverId },
+            { senderId: args.receiverId, receiverId: ctx.userId! },
+          ],
+        },
+        include: { sender: true, receiver: true },
+        orderBy: { createdAt: "asc" },
+      });
+    },
     // nearByEvents
 
     //admin
@@ -755,21 +771,19 @@ export const resolvers = {
       args: { content: string; receiverId: number },
       ctx: context,
     ) => {
-      if (!ctx.userId) {
-        throw new Error("Not authenticated for sending messages");
-      }
+      isAuth(ctx);
       const message = await prisma.message.create({
         data: {
           content: args.content,
-          senderId: ctx.userId,
+          senderId: ctx.userId!,
           receiverId: args.receiverId,
         },
-        include: { sender: true },
+        include: { sender: true, receiver: true },
       });
       console.log("message is: ", message);
-      const roomId = twoUserRoomId<number>(ctx.userId, args.receiverId);
-      ctx.io.to(roomId).emit("newRoomMessage", message);
-      return { message };
+      const roomId = twoUserRoomId<number>(ctx.userId!, args.receiverId);
+      await ctx.io.to(roomId).emit("newRoomMessage", message);
+      return message;
     },
   },
 };

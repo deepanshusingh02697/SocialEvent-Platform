@@ -1,7 +1,7 @@
 .con {
   display: flex;
   flex-direction: column;
-  min-height: 86vh;
+  min-height: 84vh;
   font-size: 18px;
   background: #f0f2f5;
   width: 100%;
@@ -104,6 +104,7 @@
 
 .chatUsername {
   font-weight: bold;
+  text-transform: capitalize;
   font-size: 15px;
 }
 
@@ -205,6 +206,18 @@
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  padding: 0;
 }
 
 .sendBtn:hover {

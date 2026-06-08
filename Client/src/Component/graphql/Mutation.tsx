@@ -84,3 +84,20 @@ export const Leave_EVENT_MUTATION = gql`
     leaveEvent(eventId: $eventId)
   }
 `;
+
+export const Message_MUTATION = gql`
+  mutation Mutation($content: String!, $receiverId: Int!) {
+    sendMessage(content: $content, receiverId: $receiverId) {
+      id
+      receiverId
+      senderId
+      sender {
+        email
+        role
+      }
+      content
+    }
+  }
+`;
+
+

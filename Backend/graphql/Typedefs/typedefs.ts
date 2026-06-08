@@ -3,7 +3,6 @@ enum Role{
     ADMIN
     USER
 }
-
 scalar DateTime
 # User
 type User{
@@ -104,10 +103,12 @@ type EventParticipant {
 }
 
 type Message{
-    id: ID!
+    id: Int!
     content:String!
     senderId:Int!
-    receivedId:Int!
+    receiverId:Int!
+    sender:User!
+    receiver:User!
     createdAt:String!
 }
 

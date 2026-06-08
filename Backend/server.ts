@@ -4,7 +4,7 @@ import { typeDefs } from "./graphql/Typedefs/typedefs";
 import { resolvers } from "./graphql/Resolvers/resolvers";
 import express from "express";
 import { expressMiddleware } from "@as-integrations/express5";
-import { checkAuth, context } from "./graphql/context";
+import { createCheckAuth, context } from "./graphql/context";
 import cookieParser from "cookie-parser";
 import uploadRouter from "./Routes/uploadRoute"
 import { createServer } from "node:http";
@@ -33,12 +33,18 @@ const io = new Server(httpServer, {
   },
   transports: ["websocket", "polling"],
 });
+console.log("Socekt.io server initialized ");
 
 
-io.on("connection",(socket)=>{
+io.on("connect",(socket)=>{
   console.log("User connected");
   console.log("Socket id : ",socket.id);
   
+  socket.on("joinRoom", (roomId: string) => {
+    socket.join(roomId);
+    console.log(`socket, socketId : ${socket.id} joined room: ${roomId}`);
+  });
+
   socket.on("disconnect",()=>{
     console.log("Client disconnected");
   })
@@ -60,7 +66,7 @@ async function startServer() {
     express.json(),
     cookieParser(),
     expressMiddleware<context>(server, {
-      context: checkAuth(req,res,io),
+      context: createCheckAuth(io)
     }),
   );
   httpServer.listen(port, () => {

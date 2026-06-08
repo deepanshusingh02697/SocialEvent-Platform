@@ -97,16 +97,37 @@ export const GET_USER_JOIN_QUERY = gql`
   }
 `;
 
-export const GET_ATTENDITES_ChatPopup=gql`
-query Query($eventId: ID!) {
-  eventParticipants(eventId: $eventId) {
-    lastname
-    firstname
-    id
-    profile {
-      profilePic
+export const GET_ATTENDITES_ChatPopup = gql`
+  query Query($eventId: ID!) {
+    eventParticipants(eventId: $eventId) {
+      lastname
+      firstname
+      id
+      profile {
+        profilePic
+      }
+      email
     }
-    email
   }
-}
-`
+`;
+
+export const Get_Message_Query = gql`
+  query Query($receiverId: Int!) {
+    getMessages(receiverId: $receiverId) {
+      id
+      content
+      senderId
+      createdAt
+      receiver {
+        firstname
+        isActive
+        id
+      }
+      sender {
+        firstname
+        id
+      }
+      receiverId
+    }
+  }
+`;

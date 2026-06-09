@@ -12,6 +12,25 @@
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-weight: 600;
 }
+.signbtnCon{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.signblock{
+  display: flex;
+  padding: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+.signbtn{
+  background-color: #4690e5;
+  color: #ecf1f9;
+}
 .signupCon {
   background-color: #ffffff;
   padding: 30px;

@@ -9,6 +9,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { ContextProvider } from "./Component/Context/PopupContext.tsx";
 import { ChatContextProvider } from "./Component/Context/ChatPopupContext.tsx";
+import { EditIdContextProvider } from "./Admin/AdminContext/AdminContext.tsx";
 
 const httpLink = createHttpLink({
   uri: "http://localhost:4003/graphql",
@@ -25,7 +26,9 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <ContextProvider>
           <ChatContextProvider>
-            <App />
+            <EditIdContextProvider>
+              <App />
+            </EditIdContextProvider>
           </ChatContextProvider>
           <ToastContainer />
         </ContextProvider>

@@ -140,7 +140,7 @@ type Query{
 
 type Mutation{
     signUp(firstname:String!,lastname:String!,email:String!,password:String!):AuthResponse!
-    logIn(email:String!,password:String!):AuthResponse!
+    adminlogIn(email:String!,password:String!):AuthResponse!
     googleLogin(idToken:String!):AuthResponse!
     sendOTPLogin(email:String!,password:String!,toPhone:String!):OtpResponse!
     verifyOTP(code:String!):OtpResponse!
@@ -160,7 +160,8 @@ type Mutation{
     # Events - ADMIN create only
     createEvent( title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String!,eventEndDate:String!,image:String): Event!
 
-    updateEvent(eventId:ID!, title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String!,eventEndDate:String!,image:String): Event!
+    updateEvent(eventId:ID!, title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String,eventEndDate:String,image:String): Event!
+
     deleteEvent(eventId:ID!):Boolean!
 
     # Events - authenticated USER

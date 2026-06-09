@@ -216,7 +216,7 @@ export const resolvers = {
         throw error;
       }
     },
-    logIn: async (
+    adminlogIn: async (
       _: unknown,
       args: { email: string; password: string },
       ctx: context,
@@ -225,13 +225,12 @@ export const resolvers = {
         if (!args.email || !args.password) {
           throw new Error("Email and Password are required ");
         }
-
         const user = await prisma.user.findUnique({
-          where: { email: args.email.toLowerCase().trim() },
+          where: { email: args.email.toLowerCase().trim(), role: "ADMIN" },
         });
 
         if (!user) {
-          throw new Error("Invalid credentials");
+          throw new Error("Invalid credentials to login as Admin");
         }
         if (!user.password) {
           throw new Error("For manual login user password must");
@@ -243,7 +242,7 @@ export const resolvers = {
         console.log("passwordMatches : ", passwordMatches);
 
         if (!passwordMatches) {
-          throw new Error("Invalid credentials");
+          throw new Error("Invalid credentials to login as Admin");
         }
 
         setTokens(ctx.res, user.id, user.role);
@@ -309,7 +308,7 @@ export const resolvers = {
         throw new Error("All field are required");
       }
       const user = await prisma.user.findUnique({
-        where: { email: args.email.toLowerCase().trim() },
+        where: { email: args.email.toLowerCase().trim(), role: "USER" },
       });
       if (!user) {
         throw new Error("Invalid credential");
@@ -464,9 +463,9 @@ export const resolvers = {
       }
     },
     logOut: async (_parent: unknown, _args: unknown, ctx: context) => {
-      if (!ctx.userId) {
-        throw new Error("Not authenticated - Login first to logout mutation");
-      }
+      // if (!ctx.userId) {
+      //   throw new Error("Not authenticated - Login first to logout mutation");
+      // }
       ctx.res.clearCookie("accessToken", accessCookieOptions);
       ctx.res.clearCookie("refreshToken", refreshCookieOptions);
       return true;
@@ -608,6 +607,7 @@ export const resolvers = {
         longitude: number;
         eventStartDate: string;
         eventEndDate: string;
+        image:string
       },
       ctx: context,
     ) => {
@@ -619,25 +619,28 @@ export const resolvers = {
 
       if (!event) throw new Error("Event not found");
 
-      const startDate = args.eventStartDate;
-      const endDate = args.eventEndDate;
+      // const startDate = args.eventStartDate+":00.000Z";
+      // const endDate = args.eventEndDate+":00.000Z"
+            const startDate = new Date(args.eventStartDate)
+      const endDate = new Date(args.eventEndDate)
 
       if (startDate && endDate) {
-        if (new Date(startDate) <= new Date(endDate)) {
+        if (endDate <= startDate) {
           throw new Error("End date/time must be after start date/time");
         }
       }
       return await prisma.event.update({
         where: { id: Number(args.eventId) },
         data: {
-          title: args.title,
-          description: args.description,
-          Eventlocation: args.Eventlocation,
-          latitude: args.latitude,
-          longitude: args.longitude,
-          category: args.category,
+          ...(args.title && { title: args.title }),
+          ...(args.description && { description: args.description }),
+          ...(args.Eventlocation && { Eventlocation: args.Eventlocation }),
+          ...(args.latitude !== null && { latitude: args.latitude }),
+          ...(args.longitude !== null && { longitude: args.longitude }),
+          ...(args.category && { category: args.category }),
           ...(startDate && { eventStartDate: startDate }),
           ...(endDate && { eventEndDate: endDate }),
+          ...(args.image && {image:args.image})
         },
       });
     },

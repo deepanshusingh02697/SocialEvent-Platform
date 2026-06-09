@@ -47,6 +47,16 @@ export interface Get_EVENTS_TYPE {
   getEvents: [GET_EVENY_TYPE];
 }
 
+export interface Admin_Login_Interface {
+  adminlogIn: {
+    user: {
+      role: string;
+      firstname: string;
+      email: string;
+      lastname: string;
+    };
+  };
+}
 export interface Otp_Login_Res_Interface {
   sendOTPLogin: {
     otpMsg: string;
@@ -157,4 +167,28 @@ export interface Get_Message_Interface {
       receiverId: number;
     },
   ];
+}
+
+// ADMIN
+export interface Post_CreateEvent_Interface {
+  createEvent: {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    Eventlocation: string;
+    latitude: number;
+    longitude: number;
+    eventStartDate: string;
+    eventEndDate: string;
+    image: string;
+    attendeeCount: number;
+    distance: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+export interface EditIdContextType {
+  editId: string | null;
+  setUpdateId:(id: string)=> void;
 }

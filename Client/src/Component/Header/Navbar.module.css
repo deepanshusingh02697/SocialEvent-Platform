@@ -31,7 +31,7 @@
   position: absolute;
   z-index: 12;
   right: 15vw;
-  top: 75px;
+  top: 77px;
   box-shadow:
     rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
@@ -40,6 +40,7 @@
   flex-direction: column;
   gap: 10px;
   display: block;
+  background-color: rgb(245, 247, 249);
 }
 .profileFilternone {
   display: none;

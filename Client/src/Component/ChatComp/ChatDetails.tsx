@@ -133,7 +133,7 @@ export default function ChatDetails() {
                       >
                         {msg.content}
                         <div className={styles.messageTime}>
-                          {new Date(msg.createdAt).toLocaleTimeString("en-IN", {
+                          {new Date(Number(msg.createdAt)).toLocaleTimeString("en-IN", {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}

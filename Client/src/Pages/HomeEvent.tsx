@@ -44,14 +44,15 @@ export default function HomeEvent() {
       search: isSearch === "" ? null : isSearch,
     },
   });
-  const res = data?.getEvents || [];  
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+  const res = data?.getEvents || [];
 
   if (!res.length) {
     return <p>No Event found</p>;
   }
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+
   const uniqueCategoriee = ["All", ...new Set(res.map((cur) => cur.category))];
 
   const findNearByEvents = () => {
@@ -109,11 +110,7 @@ export default function HomeEvent() {
                 >
                   {uniqueCategoriee
                     ? uniqueCategoriee.map((cur) => {
-                        return (
-                          <>
-                            <option value={cur}>{cur}</option>
-                          </>
-                        );
+                        return <option value={cur}>{cur}</option>;
                       })
                     : "All"}
                 </select>
@@ -174,10 +171,12 @@ export default function HomeEvent() {
                           </div>
                         </div>
                         <div>
-                          <FiMapPin className="detailIcon"/> {ele.Eventlocation}
+                          <FiMapPin className="detailIcon" />{" "}
+                          {ele.Eventlocation}
                         </div>
                         <div>
-                          <IoPeopleSharp className="detailIcon"/> {ele.attendeeCount} attendees
+                          <IoPeopleSharp className="detailIcon" />{" "}
+                          {ele.attendeeCount} attendees
                         </div>
                       </div>
                     </div>

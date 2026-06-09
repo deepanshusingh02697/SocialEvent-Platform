@@ -8,7 +8,7 @@ import {
 import type { ChatPopupContextType } from "../graphql/client";
 
 const ChatWhearhouseContext = createContext<ChatPopupContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export function ChatContextProvider({ children }: { children: ReactNode }) {

@@ -9,12 +9,14 @@ import { POST_LOGOUT_MUTATION } from "../graphql/Mutation";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IoPeopleCircleOutline } from "react-icons/io5";
+import { chatPopupContext } from "../Context/ChatPopupContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useQuery<GET_CURRENT_USER_Interface>(GET_CURRENT_USER_QUERY);
   const client = useApolloClient();
   const navigate = useNavigate();
+  const { closeChatPopup } = chatPopupContext();
 
   const res = data?.currentUser?.firstname;
 
@@ -29,8 +31,8 @@ export default function Navbar() {
     try {
       await logOutUser();
       await client.clearStore();
+      closeChatPopup();
       navigate("/login");
-
       toast("Logged out successfully", {
         position: "top-right",
         type: "success",
@@ -50,11 +52,17 @@ export default function Navbar() {
     navigate("/profile");
     setIsOpen(false);
   };
+  const handleJoiinEvent = () => {
+    navigate("/joinedevent");
+    setIsOpen(false);
+  };
   return (
     <div className={styles.bodyCon}>
       <div className={styles.container}>
         <div className={styles.con}>
-          <NavLink className={`navlinkStyle ${styles.logo}`} to="/" >EventHub</NavLink>
+          <NavLink className={`navlinkStyle ${styles.logo}`} to="/">
+            EventHub
+          </NavLink>
           <div
             className={styles.profilelogo}
             onClick={() => setIsOpen(!isOpen)}
@@ -72,11 +80,14 @@ export default function Navbar() {
               </div>
               {data?.currentUser && (
                 <>
-                  <div className={styles.profileBlock}>
+                  <div
+                    className={styles.profileBlock}
+                    onClick={handleJoiinEvent}
+                  >
                     <IoPeopleCircleOutline />
                     <span> Joined Events</span>
                   </div>
-                  <div className={styles.profileBlock} style={{background:"#6e97f6", color:"white"}} onClick={handleLogout}>
+                  <div className={styles.profileBlock} onClick={handleLogout}>
                     <FiLogOut />
                     <span> Logout</span>
                   </div>

@@ -47,6 +47,7 @@ export const GET_EVENTS_QUERY = gql`
       category
       title
       isArchive
+      description
     }
   }
 `;
@@ -131,3 +132,8 @@ export const Get_Message_Query = gql`
     }
   }
 `;
+
+
+//* ADMIN */
+
+

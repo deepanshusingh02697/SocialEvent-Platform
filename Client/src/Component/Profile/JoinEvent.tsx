@@ -66,55 +66,60 @@ export default function JoinEvent() {
   }
   return (
     <>
-      <div className={styles.wrapper}>
-        <h2 className={styles.title}>Joined Events</h2>
+      <div className="bodyCon">
+        <div className={`container ${styles.profileCon}`}>
+          <div className={styles.wrapper}>
+            <h2 className={styles.title}>Joined Events</h2>
 
-        <div className={styles.list}>
-          {res.map((event) => (
-            <div key={event?.id} className={styles.card}>
-              <NavLink to={`/event/${event.id}`}>
-                <img
-                  src={event.image}
-                  alt={event?.image}
-                  className={styles.image}
-                />
-              </NavLink>
+            <div className={styles.list}>
+              {res.map((event) => (
+                <div key={event?.id} className={styles.card}>
+                  <NavLink to={`/event/${event.id}`}>
+                    <img
+                      src={event.image}
+                      alt={event?.image}
+                      className={styles.image}
+                    />
+                  </NavLink>
 
-              <div className={styles.info}>
-                <span className={styles.category}>{event?.category}</span>
-                <h3 className={styles.eventTitle}>{event?.title}</h3>
-                <div className={styles.meta}>
-                  <span className={styles.metaItem}>
-                    <FaCalendarAlt className={styles.icon} />
-                    {formatDate(event?.eventStartDate)}
-                  </span>
-                  <span className={styles.metaItem}>
-                    <FaClock className={styles.icon} />
-                    {formatDate(event?.eventEndDate)}
-                  </span>
+                  <div className={styles.info}>
+                    <span className={styles.category}>{event?.category}</span>
+                    <h3 className={styles.eventTitle}>{event?.title}</h3>
+                    <div className={styles.meta}>
+                      <span className={styles.metaItem}>
+                        <FaCalendarAlt className={styles.icon} />
+                        {formatDate(event?.eventStartDate)}
+                      </span>
+                      <span className={styles.metaItem}>
+                        <FaClock className={styles.icon} />
+                        {formatDate(event?.eventEndDate)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className={styles.right}>
+                    <div>
+                      <RiDeleteBin6Fill />
+                    </div>
+                    <span className={styles.metaItem}>
+                      <FaMapMarkerAlt className={styles.icon} />
+                      {event?.Eventlocation}
+                    </span>
+                    <span
+                      className={styles.attendees}
+                      onClick={() => openChatPopup(event?.id)}
+                    >
+                      <FaUsers className={styles.icon} />
+                      {event?.attendeeCount - 1} attendees
+                    </span>
+                  </div>
                 </div>
-              </div>
-
-              <div className={styles.right}>
-                <div>
-                  <RiDeleteBin6Fill />
-                </div>
-                <span className={styles.metaItem}>
-                  <FaMapMarkerAlt className={styles.icon} />
-                  {event?.Eventlocation}
-                </span>
-                <span
-                  className={styles.attendees}
-                  onClick={() => openChatPopup(event?.id)}
-                >
-                  <FaUsers className={styles.icon} />
-                  {event?.attendeeCount} attendees
-                </span>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
+
       <ChatPopup userJoinedEvents={res} eventParticipants={popupAttendies} />
     </>
   );

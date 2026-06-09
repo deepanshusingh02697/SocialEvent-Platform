@@ -28,6 +28,19 @@ export const SIGNUP_MUTATION = gql`
     }
   }
 `;
+
+export const ADMIN_LOGIN_MUTATION = gql`
+  mutation Mutation($email: String!, $password: String!) {
+    adminlogIn(email: $email, password: $password) {
+      user {
+        role
+        firstname
+        email
+        lastname
+      }
+    }
+  }
+`;
 export const OTP_LOGIN_MUTATION = gql`
   mutation Mutation($email: String!, $password: String!, $toPhone: String!) {
     sendOTPLogin(email: $email, password: $password, toPhone: $toPhone) {
@@ -100,4 +113,83 @@ export const Message_MUTATION = gql`
   }
 `;
 
+export const CreateEvent_Mutation = gql`
+  mutation Mutation(
+    $title: String!
+    $description: String!
+    $category: String!
+    $eventlocation: String!
+    $eventStartDate: String!
+    $eventEndDate: String!
+    $image: String
+  ) {
+    createEvent(
+      title: $title
+      description: $description
+      category: $category
+      Eventlocation: $eventlocation
+      eventStartDate: $eventStartDate
+      eventEndDate: $eventEndDate
+      image: $image
+    ) {
+      id
+      title
+      description
+      category
+      Eventlocation
+      latitude
+      longitude
+      eventStartDate
+      eventEndDate
+      image
+      attendeeCount
+      distance
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
+export const Update_Event_Mutation = gql`
+  mutation Mutation(
+    $eventId: ID!
+    $title: String!
+    $description: String!
+    $category: String!
+    $eventlocation: String!
+    $eventStartDate: String!
+    $eventEndDate: String!
+    $latitude: Float
+    $longitude: Float
+    $image: String
+  ) {
+    updateEvent(
+      eventId: $eventId
+      title: $title
+      description: $description
+      category: $category
+      Eventlocation: $eventlocation
+      eventStartDate: $eventStartDate
+      eventEndDate: $eventEndDate
+      latitude: $latitude
+      longitude: $longitude
+      image: $image
+    ) {
+      id
+      title
+      description
+      category
+      Eventlocation
+      latitude
+      longitude
+      eventStartDate
+      eventEndDate
+      image
+      attendeeCount
+      isArchive
+      distance
+      createdAt
+      updatedAt
+    }
+  }
+`;

@@ -11,6 +11,7 @@ export default function ProtectedRoute({ children }: Props) {
     GET_CURRENT_USER_QUERY,
   );
   console.log("data from backend is : ", data);
+  
   if (loading) {
     return (
       <>

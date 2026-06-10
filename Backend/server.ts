@@ -19,7 +19,7 @@ const httpServer = createServer(app);
 app.use(
   cors({
     origin: [
-      // "http://localhost:5173",
+      "http://localhost:5173",
       "https://socialevent-platform-client.onrender.com", //For Production
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -33,7 +33,7 @@ app.use(
 const io = new Server(httpServer, {
   cors: {
     origin: [
-      // "http://localhost:5173",
+      "http://localhost:5173",
       "https://socialevent-platform-client.onrender.com", //For Production
     ],
     methods: ["GET", "POST"],

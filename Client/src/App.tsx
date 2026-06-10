@@ -1,34 +1,27 @@
 import { Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./Component/PublicProtectedRoute/ProtectedRoute";
+ 
 import Login from "./Component/AuthComp/Login";
 import Signup from "./Component/AuthComp/Signup";
+ 
 import AuthLayout from "./Component/Layout/AuthLayout";
 import MainLayout from "./Component/Layout/MainLayout";
+ 
 import Profile from "./Component/Profile/Profile";
+import JoinEvent from "./Component/Profile/JoinEvent";
 import EventDetails from "./Pages/EventDetails/EventDetails";
 import ChatDetails from "./Component/ChatComp/ChatDetails";
 import HomeEvent from "./Pages/HomeEvent";
-import "./App.css";
+ 
 import PublicRoute from "./Component/PublicProtectedRoute/PublicRoute";
-import JoinEvent from "./Component/Profile/JoinEvent";
+import ProtectedRoute from "./Component/PublicProtectedRoute/ProtectedRoute";
+ 
 import AdminLayout from "./Admin/AdminLayout/AdminLayout";
 import AEvents from "./Admin/AdminComponent/Pages/AdminEvents/AEvents";
 import AUsers from "./Admin/AdminComponent/Pages/AdminUsers/AUsers";
 import ACreateEvent from "./Admin/AdminComponent/Pages/AdminCreateEvent/ACreateEvent";
 import AdminViewEvent from "./Admin/AdminComponent/Pages/AdminViewEvent/AdminViewEvent";
-import { useAuth } from "./Component/Context/AuthContext";
-import { ClipLoader } from "react-spinners";
-
+ 
 export default function App() {
-  const { authUserData, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="loadingOverlay">
-        <ClipLoader color="#6c21c8" size={48} />
-      </div>
-    );
-  }
   return (
     <Routes>
       <Route
@@ -41,39 +34,35 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
       </Route>
-
-      {authUserData?.role === "ADMIN" ? (
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/" element={<AEvents />} />
-          <Route path="/users" element={<AUsers />} />
-          <Route path="/createevent" element={<ACreateEvent />} />
-          <Route path="/viewevent/:viewId" element={<AdminViewEvent />} />
-        </Route>
-      ) : (
-        <>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <MainLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="/" element={<HomeEvent />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/joinedevent" element={<JoinEvent />} />
-            <Route path="/event/:eventId" element={<EventDetails />} />
-            <Route path="/chat/:chatId" element={<ChatDetails />} />
-          </Route>
-        </>
-      )}
+ 
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute allowedRole="USER">
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<HomeEvent />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="joinedevent" element={<JoinEvent />} />
+        <Route path="event/:eventId" element={<EventDetails />} />
+        <Route path="chat/:chatId" element={<ChatDetails />} />
+      </Route>
+ 
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRole="ADMIN">
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<AEvents />} />
+        <Route path="users" element={<AUsers />} />
+        <Route path="createevent" element={<ACreateEvent />} />
+        <Route path="viewevent/:viewId" element={<AdminViewEvent />} />
+      </Route>
     </Routes>
   );
 }

@@ -38,10 +38,10 @@ export default function AdminViewEvent() {
   if (loading) {
     return (
       <div className="loadingOverlay">
-        <ClipLoader color="#6c21c8" size={48}/>
+        <ClipLoader color="#6c21c8" size={48} />
       </div>
-    )
-  }  
+    );
+  }
   if (!res) return <p>No event found.</p>;
 
   return (
@@ -109,21 +109,21 @@ export default function AdminViewEvent() {
             </div>
 
             {/* <div className={styles.mapBox}> */}
-              <MapContainer
-                center={[res.latitude, res.longitude]}
-                zoom={14}
-                // style={{ width: "100%", height: "100%", borderRadius: "12px" }}
-                scrollWheelZoom={false}
-                className={styles.mapContainer}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Marker position={[res.latitude, res.longitude]}>
-                  <Popup>{res.Eventlocation}</Popup>
-                </Marker>
-              </MapContainer>
+            <MapContainer
+              center={[res.latitude, res.longitude]}
+              zoom={14}
+              // style={{ width: "100%", height: "100%", borderRadius: "12px" }}
+              scrollWheelZoom={false}
+              className={styles.mapContainer}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[res.latitude, res.longitude]}>
+                <Popup>{res.Eventlocation}</Popup>
+              </Marker>
+            </MapContainer>
             {/* </div> */}
           </div>
 

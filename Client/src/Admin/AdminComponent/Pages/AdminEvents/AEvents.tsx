@@ -48,7 +48,7 @@ export default function AEvents() {
             <p>No Event found</p>
             <button
               style={{ padding: "10px 15px" }}
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/admin")}
             >
               Back
             </button>
@@ -67,12 +67,12 @@ export default function AEvents() {
 
   const handleEventUpdate = (idx: string) => {
     setUpdateId(idx);
-    navigate("/createevent");
+    navigate("/admin/createevent");
   };
 
   const handleEventView = (idx: string) => {
     setUpdateId(idx);
-    navigate(`/viewevent/${idx}`);
+    navigate(`/admin/viewevent/${idx}`);
   };
 
   const handleDeleteEvent = async (idx: string) => {
@@ -96,7 +96,7 @@ export default function AEvents() {
           <h1 className={styles.pageTitle}>All Events</h1>
           <button
             className={styles.createBtn}
-            onClick={() => navigate("/createevent")}
+            onClick={() => navigate("/admin/createevent")}
           >
             <IoMdAdd />
             Create Event

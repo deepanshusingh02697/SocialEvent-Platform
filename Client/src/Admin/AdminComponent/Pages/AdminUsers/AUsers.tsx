@@ -37,7 +37,7 @@ export default function AUsers() {
             <p>No Event found</p>
             <button
               style={{ padding: "10px 15px" }}
-              onClick={() => navigate("/users")}
+              onClick={() => navigate("/admin/users")}
             >
               Back
             </button>

@@ -30,9 +30,9 @@ export default function Navbar() {
   });
   const handleLogout = async () => {
     try {
+      closeChatPopup();
       await logOutUser();
       await client.clearStore();
-      closeChatPopup();
       navigate("/login");
       toast("Logged out successfully", {
         position: "top-right",

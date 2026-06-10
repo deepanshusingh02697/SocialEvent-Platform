@@ -13,7 +13,8 @@ import { EditIdContextProvider } from "./Admin/AdminContext/AdminContext.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4003/graphql",
+  // uri: "http://localhost:4003/graphql",
+  uri:"https://socialevent-platform-snhu.onrender.com",
   credentials: "include",
 });
 const client = new ApolloClient({

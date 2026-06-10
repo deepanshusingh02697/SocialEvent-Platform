@@ -9,17 +9,8 @@ import { GET_CURRENT_USER_QUERY } from "../graphql/Query.js";
 import { SIGNUP_MUTATION } from "../graphql/Mutation.js";
 import GoogleAuth from "./GoogleAuth";
 import { ClipLoader } from "react-spinners";
+import type { SignupResponseData } from "../graphql/client.js";
 
-interface SignupResponseData {
-  signUp: {
-    user: {
-      id: string;
-      email: string;
-      firstName: string;
-      lastName: string;
-    };
-  };
-}
 
 export default function Signup() {
   const [input, setInput] = useState({
@@ -78,8 +69,8 @@ export default function Signup() {
     try {
       const response = await signUpUser({
         variables: {
-          firstName: input.firstname,
-          lastName: input.lastname,
+          firstname: input.firstname,
+          lastname: input.lastname,
           email: input.email,
           password: input.password,
         },

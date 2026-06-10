@@ -50,13 +50,13 @@ export default function ANavbar() {
         </NavLink>
  
         <div className={styles.navLinks}>
-          <NavLink to="/">
+          <NavLink to="/admin">
             <button className={`${styles.navLink}`}>
               <MdOutlineEventAvailable />
               Events
             </button>
           </NavLink>
-          <NavLink to="/users">
+          <NavLink to="/admin/users">
             <button className={styles.navLink}>
               <RiUserSharedFill />
               Users
@@ -68,7 +68,6 @@ export default function ANavbar() {
           </button>
         </div>
  
-        {/* Hamburger button */}
         <button
           className={styles.hamburger}
           onClick={() => setMenuOpen((prev) => !prev)}

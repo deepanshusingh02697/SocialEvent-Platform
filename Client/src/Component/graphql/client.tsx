@@ -26,6 +26,16 @@ export interface GET_CURRENT_USER_Interface {
     id: string;
   };
 }
+export interface SignupResponseData {
+  signUp: {
+    user: {
+      id: string;
+      email: string;
+      firstname: string;
+      lastname: string;
+    };
+  };
+}
 
 export interface googleLogin_Interface {
     googleLogin: {

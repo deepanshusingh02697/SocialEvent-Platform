@@ -1,10 +1,27 @@
+.wrapGoogleLoginCon {
+  display: flex;
+  gap: 30px;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.gline {
+  display: flex;
+  min-width:400px;
+  align-items: center;
+}
+.line {
+  height:2px;
+  width: 100%;
+  background-color: #767676;
+}
 .container {
   padding: 20px;
   background-color: #f5f7fa;
   min-height: 100vh;
   display: grid;
   place-items: center;
-  font-family: sans-serif; /* Adds a clean, modern base font */
+  font-family: sans-serif; 
 }
 .heading {
   text-align: center;
@@ -12,12 +29,12 @@
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-weight: 600;
 }
-.signbtnCon{
+.signbtnCon {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-.signblock{
+.signblock {
   display: flex;
   padding: 12px;
   display: grid;
@@ -27,7 +44,7 @@
   border: none;
   outline: none;
 }
-.signbtn{
+.signbtn {
   background-color: #4690e5;
   color: #ecf1f9;
 }
@@ -37,10 +54,9 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 400px; /* Prevents the form from stretching too wide */
+  max-width: 400px;  
 }
 
-/* Styles individual form rows */
 .signupCon form div {
   display: flex;
   flex-direction: column;
@@ -65,10 +81,9 @@
 }
 
 .signupCon input:focus {
-  border-color: #4690e5; /* Highlights the active input field */
+  border-color: #4690e5; 
 }
 
-/* Wrapper for password input and eye icon */
 .passwordInputWrapper {
   position: relative;
   display: flex;
@@ -93,7 +108,6 @@
   color: #374151;
 }
 
-/* Footer text link styles */
 .toggleText {
   text-align: center;
   font-size: 14px;
@@ -137,4 +151,9 @@
     padding: 8px;
     font-size: 14px;
   }
+  .gline {
+  display: flex;
+  min-width:250px;
+  align-items: center;
+}
 }

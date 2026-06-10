@@ -93,6 +93,25 @@ export const GET_EVENT_DETAILS_QUERY = gql`
     }
   }
 `;
+export const NEARBY_EVENTS_QUERY = gql`
+  query Query($latitude: Float!, $longitude: Float!, $radiusKm: Float!) {
+    nearbyEvents(
+      latitude: $latitude
+      longitude: $longitude
+      radiusKm: $radiusKm
+    ) {
+      id
+      Eventlocation
+      attendeeCount
+      eventStartDate
+      eventEndDate
+      image
+      category
+      distance
+      title
+    }
+  }
+`;
 export const GET_USER_JOIN_QUERY = gql`
   query Query {
     userJoinedEvents {
@@ -155,9 +174,7 @@ export const GET_ADMIN_USERS_QUERY = gql`
       googleId
       phone
       createdAt
-      profile {
-        profilePic
-      }
+      avatar
     }
   }
 `;

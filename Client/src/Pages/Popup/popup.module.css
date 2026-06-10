@@ -28,9 +28,8 @@
 }
 .boxes input {
   width: 50px;
-  /* height: 40px; */
   height: auto;
-  padding:14px 10px;
+  padding: 14px 10px;
   background-color: #d5d7db;
   border: none;
   border-radius: 10px;
@@ -54,4 +53,14 @@
   outline: none;
   border: none;
   cursor: pointer;
+}
+
+@media screen and (max-width: 480px) {
+  .popup {
+    width: 400px;
+    background-color: #ffffff;
+    font-size: 15px;
+    border-radius: 10px;
+    padding: 10px;
+  }
 }

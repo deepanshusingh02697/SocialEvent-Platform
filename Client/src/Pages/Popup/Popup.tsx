@@ -6,13 +6,18 @@ import { useOTPPopup } from "../../Component/Context/PopupContext";
 import { VERIFY_OTP_MUTATION } from "../../Component/graphql/Mutation";
 import type { verifyOtpType } from "../../Component/graphql/client";
 import styles from "./popup.module.css";
+import { GET_CURRENT_USER_QUERY } from "../../Component/graphql/Query";
 
 export default function Popup() {
   const { isOpen } = useOTPPopup();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
-  const [verifyOTP] = useMutation<verifyOtpType>(VERIFY_OTP_MUTATION);
+  const [verifyOTP] = useMutation<verifyOtpType>(VERIFY_OTP_MUTATION,{
+    refetchQueries:[{
+      query:GET_CURRENT_USER_QUERY
+    }]
+  });
 
   if (!isOpen) return null;
   console.log("is open value from Popup.tsx ; ", isOpen);

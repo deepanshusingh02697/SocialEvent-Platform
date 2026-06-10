@@ -50,7 +50,7 @@ export const resolvers = {
       return prisma.interest.findMany({ orderBy: { name: "asc" } });
     },
 
-    getEvents: async (
+    /*   getEvents: async (
       _: unknown,
       args: {
         category?: string;
@@ -87,8 +87,65 @@ export const resolvers = {
         },
         orderBy: { eventStartDate: "asc" },
       });
-    },
+    }, */
 
+    getEvents: async (
+      _: unknown,
+      args: {
+        category?: string;
+        search?: string;
+        fromDate?: string;
+        toDate?: string;
+        latitude?: number;
+        longitude?: number;
+      },
+      _ctx: unknown,
+    ) => {
+      // If user provides location,I used  query to get distance of the user
+      if (args.latitude !== undefined && args.longitude !== undefined) {
+        const categoryFilter = args.category
+          ? `AND category = '${args.category}'`
+          : "";
+        const searchFilter = args.search
+          ? `AND (title ILIKE '%${args.search}%' OR description ILIKE '%${args.search}%')`
+          : "";
+        const toDateFilter = args.toDate
+          ? `AND "eventEndDate" <= '${args.toDate}'::timestamp`
+          : "";
+
+        return await prisma.$queryRawUnsafe<any[]>(`
+      SELECT *,
+        (point(${args.longitude}, ${args.latitude}) <@> point(longitude, latitude)) AS distance
+      FROM "Event"
+      WHERE "isArchive" = false
+        AND latitude IS NOT NULL
+        AND longitude IS NOT NULL
+        ${categoryFilter}
+        ${searchFilter}
+        ${toDateFilter}
+      ORDER BY "eventStartDate" ASC
+    `);
+      }
+      return await prisma.event.findMany({
+        where: {
+          isArchive: false,
+          ...(args.category && { category: args.category }),
+          ...(args.search && {
+            OR: [
+              { title: { contains: args.search, mode: "insensitive" } },
+              { description: { contains: args.search, mode: "insensitive" } },
+              { Eventlocation: { contains: args.search, mode: "insensitive" } },
+            ],
+          }),
+          ...(args.fromDate && {
+            eventStartDate: { gte: new Date(args.fromDate) },
+          }),
+          ...(args.toDate && { eventEndDate: { lte: new Date(args.toDate) } }),
+        },
+        include: { participants: { include: { user: true } } },
+        orderBy: { eventStartDate: "asc" },
+      });
+    },
     getEvent: async (_: unknown, args: { eventId: string }, ctx: context) => {
       const event = await prisma.event.findUnique({
         where: { id: Number(args.eventId) },
@@ -119,6 +176,34 @@ export const resolvers = {
       });
     },
     // nearByEvents
+    nearbyEvents: async (
+      _: any,
+      args: {
+        latitude: number;
+        longitude: number;
+        radiusKm: number;
+        category?: string;
+      },
+    ) => {
+      const categoryFilter = args.category
+        ? `AND category = '${args.category}'`
+        : "";
+
+      const events = await prisma.$queryRawUnsafe<any[]>(`
+        SELECT *,
+          (point(${args.longitude}, ${args.latitude}) <@> point(longitude, latitude)) AS distance
+        FROM "Event"
+        WHERE
+          "isArchive" = false
+          AND latitude IS NOT NULL
+          AND longitude IS NOT NULL
+          AND (point(${args.longitude}, ${args.latitude}) <@> point(longitude, latitude)) < ${args.radiusKm * 0.621371}
+          ${categoryFilter}
+        ORDER BY distance ASC
+      `);
+
+      return events;
+    },
 
     //admin
     userJoinedEvents: async (_: unknown, __: unknown, ctx: context) => {
@@ -276,6 +361,9 @@ export const resolvers = {
           idToken: idToken,
           audience: process.env.GOOGLE_CLIENT_ID!,
         });
+
+        console.log("Google ticket is : ",ticket);
+        
         const payload = ticket.getPayload();
         console.log("payload by generating with google client id : ", payload);
 
@@ -283,7 +371,10 @@ export const resolvers = {
           throw new Error("Invalid Google Account");
         }
 
-        const { sub: googleId, email, given_name, family_name } = payload;
+        console.log("Google payload is : ",payload);
+        
+
+        const { sub: googleId, email, given_name, family_name,picture } = payload;
 
         let user = await prisma.user.findFirst({
           where: {
@@ -296,8 +387,9 @@ export const resolvers = {
             data: {
               email: email,
               googleId: googleId,
-              firstname: given_name || "Google",
-              lastname: family_name || "User",
+              firstname: given_name!,
+              lastname: family_name!,
+              avatar: picture,
             },
           });
         }
@@ -563,7 +655,7 @@ export const resolvers = {
         });
       } catch (error) {
         console.error("update profile error : ", error);
-        throw Error
+        throw Error;
       }
     },
     deleteProfile: async (_: unknown, __: unknown, ctx: context) => {

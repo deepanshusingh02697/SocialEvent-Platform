@@ -254,3 +254,92 @@
   color: #ef4444;
 }
 .actionDelete:hover { background: #fef2f2; }
+
+ 
+@media (max-width: 1024px) {
+  .main {
+    padding: 28px 24px;
+  }
+ 
+  .eventDesc {
+    max-width: 140px;
+  }
+ 
+  .location {
+    max-width: 80px;
+  }
+}
+ 
+@media (max-width: 768px) {
+  .main {
+    padding: 20px 14px;
+  }
+ 
+  .pageTitle {
+    font-size: 22px;
+  }
+ 
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px;
+  }
+ 
+  .filterSelect {
+    width: 100%;
+  }
+ 
+  .table thead th:nth-child(4),
+  .table thead th:nth-child(5),
+  .table thead th:nth-child(6),
+  .table tbody td:nth-child(4),
+  .table tbody td:nth-child(5),
+  .table tbody td:nth-child(6) {
+    display: none;
+  }
+}
+ 
+@media (max-width: 480px) {
+  .main {
+    padding: 14px 10px;
+  }
+ 
+  .pageHeader {
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+ 
+  .pageTitle {
+    font-size: 19px;
+  }
+ 
+  .createBtn {
+    width: 150px;
+    padding: 15px;
+  }
+ 
+  .table thead th:nth-child(3),
+  .table tbody td:nth-child(3) {
+    display: none;
+  }
+ 
+  .imgPlaceholder {
+    width: 44px;
+    height: 44px;
+  }
+ 
+  .eventName {
+    font-size: 13px;
+  }
+ 
+  .eventDesc {
+    display: none;
+  }
+ 
+  .tableWrapper {
+    overflow-x: auto;
+  }
+}
+ 

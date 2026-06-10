@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import styles from "./ loginsignup.module.css"
+import styles from "./ loginsignup.module.css";
 import { LuEye } from "react-icons/lu";
 import { FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
@@ -7,6 +7,8 @@ import { useMutation } from "@apollo/client/react";
 import { toast } from "react-toastify";
 import { GET_CURRENT_USER_QUERY } from "../graphql/Query.js";
 import { SIGNUP_MUTATION } from "../graphql/Mutation.js";
+import GoogleAuth from "./GoogleAuth";
+import { ClipLoader } from "react-spinners";
 
 interface SignupResponseData {
   signUp: {
@@ -123,108 +125,119 @@ export default function Signup() {
     setIsVisible(!isVisible);
   };
 
-  if (loading) {
-    return <p>Loading</p>;
+     if (loading) {
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
+    );
   }
 
   return (
     <div className={styles.container}>
-      <div className={styles.signupCon}>
-        <h3 className={styles.heading}>Create Account</h3>
-        <br />
-        <form method="post" onSubmit={handelSubmit}>
-          <div>
-            <label htmlFor="firstname">First Name</label>
-            <input
-              type="text"
-              name="firstname"
-              value={input.firstname}
-              onChange={handleChange}
-              autoComplete="off"
-            />
-          </div>
-          <div>
-            <label htmlFor="lastname">Last Name</label>
-            <input
-              type="text"
-              name="lastname"
-              value={input.lastname}
-              onChange={handleChange}
-              autoComplete="off"
-            />
-          </div>
-          <div>
-            <label htmlFor="email">Enter email</label>
-            <input
-              type="email"
-              name="email"
-              value={input.email}
-              onChange={handleChange}
-              autoComplete="off"
-            />
-          </div>
-          <div>
-            <label htmlFor="password">Password</label>
-            {/* Added container style here */}
-            <div className={styles.passwordInputWrapper}>
+      <div className={styles.wrapGoogleLoginCon}>
+        <div className={styles.gline}>
+          <span className={styles.line}></span>
+          <GoogleAuth></GoogleAuth>
+          <span className={styles.line}></span>
+        </div>
+        <div className={styles.signupCon}>
+          <h3 className={styles.heading}>Create Account</h3>
+          <br />
+          <form method="post" onSubmit={handelSubmit}>
+            <div>
+              <label htmlFor="firstname">First Name</label>
               <input
-                type={isVisible ? "text" : "password"}
-                name="password"
-                value={input.password}
+                type="text"
+                name="firstname"
+                value={input.firstname}
                 onChange={handleChange}
                 autoComplete="off"
               />
-              {/* Added icon style here */}
-              {isVisible ? (
-                <LuEye
-                  className={styles.eyeIcon}
-                  onClick={handlePwVisibility}
-                />
-              ) : (
-                <FaEyeSlash
-                  className={styles.eyeIcon}
-                  onClick={handlePwVisibility}
-                />
-              )}
             </div>
-          </div>
-          <div>
-            <label htmlFor="password">Confirm Password</label>
-            {/* Added container style here */}
-            <div className={styles.passwordInputWrapper}>
+            <div>
+              <label htmlFor="lastname">Last Name</label>
               <input
-                type={isVisible ? "text" : "password"}
-                name="confirmPassword"
-                value={input.confirmPassword}
+                type="text"
+                name="lastname"
+                value={input.lastname}
                 onChange={handleChange}
                 autoComplete="off"
               />
-              {/* Added icon style here */}
-              {isVisible ? (
-                <LuEye
-                  className={styles.eyeIcon}
-                  onClick={handlePwVisibility}
-                />
-              ) : (
-                <FaEyeSlash
-                  className={styles.eyeIcon}
-                  onClick={handlePwVisibility}
-                />
-              )}
             </div>
-          </div>
-          {/* {errorMsg && <div className={styles.error}>{errorMsg}</div>} */}
+            <div>
+              <label htmlFor="email">Enter email</label>
+              <input
+                type="email"
+                name="email"
+                value={input.email}
+                onChange={handleChange}
+                autoComplete="off"
+              />
+            </div>
+            <div>
+              <label htmlFor="password">Password</label>
+              {/* Added container style here */}
+              <div className={styles.passwordInputWrapper}>
+                <input
+                  type={isVisible ? "text" : "password"}
+                  name="password"
+                  value={input.password}
+                  onChange={handleChange}
+                  autoComplete="off"
+                />
+                {/* Added icon style here */}
+                {isVisible ? (
+                  <LuEye
+                    className={styles.eyeIcon}
+                    onClick={handlePwVisibility}
+                  />
+                ) : (
+                  <FaEyeSlash
+                    className={styles.eyeIcon}
+                    onClick={handlePwVisibility}
+                  />
+                )}
+              </div>
+            </div>
+            <div>
+              <label htmlFor="password">Confirm Password</label>
+              {/* Added container style here */}
+              <div className={styles.passwordInputWrapper}>
+                <input
+                  type={isVisible ? "text" : "password"}
+                  name="confirmPassword"
+                  value={input.confirmPassword}
+                  onChange={handleChange}
+                  autoComplete="off"
+                />
+                {/* Added icon style here */}
+                {isVisible ? (
+                  <LuEye
+                    className={styles.eyeIcon}
+                    onClick={handlePwVisibility}
+                  />
+                ) : (
+                  <FaEyeSlash
+                    className={styles.eyeIcon}
+                    onClick={handlePwVisibility}
+                  />
+                )}
+              </div>
+            </div>
+            {/* {errorMsg && <div className={styles.error}>{errorMsg}</div>} */}
 
-          <button type="submit" className={styles.submitbtn}>
-            Submit
-          </button>
-        </form>
-        {/* Added footer text style here */}
-        <div className={styles.toggleText}>
-          Have an account -
-          <span>
-            <NavLink to="/login">Login</NavLink>
-          </span>
+            <button type="submit" className={styles.submitbtn}>
+              Submit
+            </button>
+          </form>
+          {/* Added footer text style here */}
+          <div className={styles.toggleText}>
+            Have an account -
+            <span>
+              <NavLink to="/login">Login</NavLink>
+            </span>
+          </div>
         </div>
       </div>
     </div>

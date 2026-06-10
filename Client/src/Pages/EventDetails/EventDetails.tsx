@@ -32,6 +32,7 @@ import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { ClipLoader } from "react-spinners";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -77,11 +78,9 @@ export default function EventDetails() {
 
   if (loading) {
     return (
-      <>
-        <div className="loading">
-          <p>Loading...</p>
-        </div>
-      </>
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
     );
   }
 

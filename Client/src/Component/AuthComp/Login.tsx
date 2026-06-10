@@ -12,6 +12,8 @@ import type {
 } from "../graphql/client";
 import { useOTPPopup } from "../Context/PopupContext";
 import { GET_CURRENT_USER_QUERY } from "../graphql/Query";
+import GoogleAuth from "./GoogleAuth";
+import { ClipLoader } from "react-spinners";
 
 export default function Login() {
   const [islogin, setIslogin] = useState(false);
@@ -25,13 +27,14 @@ export default function Login() {
     password: "",
   });
   const [isVisible, setIsVisible] = useState(false);
-
   const [signInUser, { loading }] = useMutation<Otp_Login_Res_Interface>(
     OTP_LOGIN_MUTATION,
     {
-      refetchQueries:[{
-        query:GET_CURRENT_USER_QUERY
-      }],
+      refetchQueries: [
+        {
+          query: GET_CURRENT_USER_QUERY,
+        },
+      ],
       onCompleted: (data) => {
         console.log("data after login successfully : ", data);
       },
@@ -43,9 +46,11 @@ export default function Login() {
   const [adminSignIn] = useMutation<Admin_Login_Interface>(
     ADMIN_LOGIN_MUTATION,
     {
-      refetchQueries:[{
-        query:GET_CURRENT_USER_QUERY
-      }],
+      refetchQueries: [
+        {
+          query: GET_CURRENT_USER_QUERY,
+        },
+      ],
       onCompleted: (data) => {
         console.log("data after login successfully : ", data);
       },
@@ -195,128 +200,140 @@ export default function Login() {
     setIsVisible(!isVisible);
   };
 
-  if (loading) {
-    return <p>Loading</p>;
+   if (loading) {
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
+    );
   }
   return (
     <div className={styles.container}>
-      <div className={styles.signupCon}>
-        <div className={styles.signbtnCon}>
-          <button
-            className={`${styles.signblock} ${!islogin && styles.signbtn} `}
-            onClick={() => setIslogin(!islogin)}
-          >
-            User Sign-In
-          </button>
-          <button
-            className={`${styles.signblock} ${islogin && styles.signbtn}`}
-            onClick={() => setIslogin(!islogin)}
-          >
-            Admin Sign-In
-          </button>
+      <div className={styles.wrapGoogleLoginCon}>
+        <div className={styles.gline}>
+          <span className={styles.line}></span>
+          <GoogleAuth></GoogleAuth>
+          <span className={styles.line}></span>
         </div>
-        <br />
-        {islogin ? (
-          <>
-            <form action="" onSubmit={handleAdminSubmit}>
-              <div>
-                <label htmlFor="email">Enter email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={adminInput.email}
-                  onChange={handleAdminChange}
-                  autoComplete="off"
-                />
-              </div>
-              <div>
-                <label htmlFor="password">Password</label>
-                <div className={styles.passwordInputWrapper}>
+
+        <div className={styles.signupCon}>
+          <div className={styles.signbtnCon}>
+            <button
+              className={`${styles.signblock} ${!islogin && styles.signbtn} `}
+              onClick={() => setIslogin(!islogin)}
+            >
+              User Sign-In
+            </button>
+            <button
+              className={`${styles.signblock} ${islogin && styles.signbtn}`}
+              onClick={() => setIslogin(!islogin)}
+            >
+              Admin Sign-In
+            </button>
+          </div>
+          <br />
+          {islogin ? (
+            <>
+              <form action="" onSubmit={handleAdminSubmit}>
+                <div>
+                  <label htmlFor="email">Enter email</label>
                   <input
-                    type={isVisible ? "text" : "password"}
-                    name="password"
-                    value={adminInput.password}
+                    type="email"
+                    name="email"
+                    value={adminInput.email}
                     onChange={handleAdminChange}
                     autoComplete="off"
                   />
-                  {isVisible ? (
-                    <LuEye
-                      className={styles.eyeIcon}
-                      onClick={handlePwVisibility}
-                    />
-                  ) : (
-                    <FaEyeSlash
-                      className={styles.eyeIcon}
-                      onClick={handlePwVisibility}
-                    />
-                  )}
                 </div>
-              </div>
-              <button type="submit" className={styles.submitbtn}>
-                Submit
-              </button>
-            </form>
-          </>
-        ) : (
-          <>
-            <form action="" onSubmit={hadnleSubmit}>
-              <div>
-                <label htmlFor="email">Enter email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={input.email}
-                  onChange={handleChange}
-                  autoComplete="off"
-                />
-              </div>
-              <div>
-                <label htmlFor="password">Password</label>
-                <div className={styles.passwordInputWrapper}>
+                <div>
+                  <label htmlFor="password">Password</label>
+                  <div className={styles.passwordInputWrapper}>
+                    <input
+                      type={isVisible ? "text" : "password"}
+                      name="password"
+                      value={adminInput.password}
+                      onChange={handleAdminChange}
+                      autoComplete="off"
+                    />
+                    {isVisible ? (
+                      <LuEye
+                        className={styles.eyeIcon}
+                        onClick={handlePwVisibility}
+                      />
+                    ) : (
+                      <FaEyeSlash
+                        className={styles.eyeIcon}
+                        onClick={handlePwVisibility}
+                      />
+                    )}
+                  </div>
+                </div>
+                <button type="submit" className={styles.submitbtn}>
+                  Submit
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <form action="" onSubmit={hadnleSubmit}>
+                <div>
+                  <label htmlFor="email">Enter email</label>
                   <input
-                    type={isVisible ? "text" : "password"}
-                    name="password"
-                    value={input.password}
+                    type="email"
+                    name="email"
+                    value={input.email}
                     onChange={handleChange}
                     autoComplete="off"
                   />
-                  {isVisible ? (
-                    <LuEye
-                      className={styles.eyeIcon}
-                      onClick={handlePwVisibility}
-                    />
-                  ) : (
-                    <FaEyeSlash
-                      className={styles.eyeIcon}
-                      onClick={handlePwVisibility}
-                    />
-                  )}
                 </div>
+                <div>
+                  <label htmlFor="password">Password</label>
+                  <div className={styles.passwordInputWrapper}>
+                    <input
+                      type={isVisible ? "text" : "password"}
+                      name="password"
+                      value={input.password}
+                      onChange={handleChange}
+                      autoComplete="off"
+                    />
+                    {isVisible ? (
+                      <LuEye
+                        className={styles.eyeIcon}
+                        onClick={handlePwVisibility}
+                      />
+                    ) : (
+                      <FaEyeSlash
+                        className={styles.eyeIcon}
+                        onClick={handlePwVisibility}
+                      />
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="toPhone">Mobile Number</label>
+                  <input
+                    type="number"
+                    name="toPhone"
+                    value={input.toPhone}
+                    placeholder="Enter 10-digit phone number..."
+                    onChange={handleChange}
+                    autoComplete="off"
+                    maxLength={10}
+                  />
+                </div>
+                <button type="submit" className={styles.submitbtn}>
+                  Sent OTP
+                </button>
+              </form>
+              <div className={styles.toggleText}>
+                Don't have an account -
+                <span>
+                  <NavLink to="/register">SignUp</NavLink>
+                </span>
               </div>
-              <div>
-                <label htmlFor="toPhone">Mobile Number</label>
-                <input
-                  type="number"
-                  name="toPhone"
-                  value={input.toPhone}
-                  placeholder="Enter 10-digit phone number..."
-                  onChange={handleChange}
-                  autoComplete="off"
-                  maxLength={10}
-                />
-              </div>
-              <button type="submit" className={styles.submitbtn}>
-                Sent OTP
-              </button>
-            </form>
-            <div className={styles.toggleText}>
-              Don't have an account -
-              <span>
-                <NavLink to="/register">SignUp</NavLink>
-              </span>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -404,6 +404,7 @@ import {
 } from "../../../../Component/graphql/Query";
 import MapComponent from "../../MapComp/LocationMarker";
 import { formatDate } from "../../../../Component/Context/conversion";
+import { ClipLoader } from "react-spinners";
 
 export default function ACreateEvent() {
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -464,7 +465,7 @@ export default function ACreateEvent() {
         `${lat}, ${lng}`;
       setLocationName(name);
       // update formInput.location with fetched name
-      setFormInput((prev) => ({ ...prev, location: locationName }));
+      setFormInput((prev) => ({ ...prev, location: name }));
     } catch (err) {
       console.error("Reverse geocode failed:", err);
     }
@@ -646,7 +647,13 @@ export default function ACreateEvent() {
     navigate(-1);
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="bodyCon">
@@ -730,8 +737,8 @@ export default function ACreateEvent() {
                 <MapComponent />
               </div>
 
-              {/* LOCATION — auto-filled from reverse geocode */}
-              {/* LOCATION — auto-filled from reverse geocode */}
+              {/* LOCATION — autofilled from reverse geocode */}
+              {/* LOCATION — autofilled from reverse geocode */}
               <div className={styles.loc}>
                 <label className={styles.label}>Location</label>
                 <input

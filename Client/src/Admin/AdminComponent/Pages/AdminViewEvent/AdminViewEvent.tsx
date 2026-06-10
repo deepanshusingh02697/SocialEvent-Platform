@@ -16,6 +16,7 @@ import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { ClipLoader } from "react-spinners";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -34,10 +35,17 @@ export default function AdminViewEvent() {
   );
   const res = data?.getEvent;
 
-  if (loading) return <p>loading...</p>;
+  if (loading) {
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48}/>
+      </div>
+    )
+  }  
   if (!res) return <p>No event found.</p>;
 
   return (
+    // <div className={styles.root}>
     <div className="bodyCon">
       <div className={`container ${styles.profileCon}`}>
         <button className={styles.backLink} onClick={() => navigate(-1)}>
@@ -104,8 +112,9 @@ export default function AdminViewEvent() {
               <MapContainer
                 center={[res.latitude, res.longitude]}
                 zoom={14}
-                style={{ width: "100%", height: "100%", borderRadius: "12px" }}
+                // style={{ width: "100%", height: "100%", borderRadius: "12px" }}
                 scrollWheelZoom={false}
+                className={styles.mapContainer}
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

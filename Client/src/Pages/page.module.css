@@ -103,6 +103,13 @@
   transition: border-color 0.2s;
   width: 100%;
 }
+.clearBtn{
+  background: #e53e3e;
+  color: #fff;
+}
+.clearBtn:hover{
+  background: #c53030;
+}
  
 .filterCon:focus {
   border-color: #2363f8;
@@ -137,7 +144,6 @@
   display: block;
 }
  
-/* ===== CARD BODY ===== */
 .eventCartBlocktext {
   display: flex;
   flex-direction: column;
@@ -248,8 +254,8 @@
 @media (max-width: 480px) {
   .eventTitle {
     font-size: 18px;
+    margin-top: 10px;
   }
- 
   .serachNear {
     flex-direction: column;
   }

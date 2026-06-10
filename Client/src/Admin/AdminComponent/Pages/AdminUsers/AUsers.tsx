@@ -6,6 +6,7 @@ import { GET_ADMIN_USERS_QUERY } from "../../../../Component/graphql/Query";
 import type { GET_ADMIN_USERS_Interface } from "../../../../Component/graphql/client";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 export default function AUsers() {
   const [isSearch, setIsSearch] = useState("");
@@ -22,7 +23,11 @@ export default function AUsers() {
   const res = data?.adminGetUsers || [];
   console.log("the res in admin Users is : ", res);
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
+    );
   }
   if (!res.length) {
     return (
@@ -81,7 +86,7 @@ export default function AUsers() {
                   <td>
                     <div className={styles.avatarPlaceholder}>
                       {/* <IoPersonCircle /> */}
-                      <img src={ele.profile?.profilePic} alt="" />
+                      <img src={ele.avatar} alt="" />
                     </div>
                   </td>
                   <td>

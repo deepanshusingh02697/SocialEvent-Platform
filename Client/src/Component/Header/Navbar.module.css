@@ -19,6 +19,8 @@
 .logo {
   display: flex;
   justify-content: center;
+  gap: 10px;
+  align-items: center;
   font-size: 22px;
 }
 .profilelogo {
@@ -33,7 +35,7 @@
   position: absolute;
   z-index: 12;
   right: 15vw;
-  top: 77px;
+  top:90px;
   box-shadow:
     rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
@@ -59,4 +61,20 @@
   background-color: #6e97f6;
   color: aliceblue;
   cursor: pointer;
+}
+@media screen and (max-width: 480px) {
+  .container {
+    width: 90vw;
+  }
+  .profilefilter {
+    top: 67px;
+    right: 3vw;
+  }
+  .profileBlock {
+    font-size: 15px;
+    padding: 7px 15px;
+  }
+  .con{
+    padding:15px 0px;
+  }
 }

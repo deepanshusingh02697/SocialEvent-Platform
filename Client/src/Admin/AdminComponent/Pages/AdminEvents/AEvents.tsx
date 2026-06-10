@@ -13,6 +13,7 @@ import { formatDate } from "../../../../Component/Context/conversion";
 import { useEditContext } from "../../../AdminContext/AdminContext";
 import { delete_Event_Mutation } from "../../../../Component/graphql/Mutation";
 import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 
 export default function AEvents() {
   const [isCatefory, setIsCategory] = useState("");
@@ -57,7 +58,11 @@ export default function AEvents() {
     );
   }
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48}/>
+      </div>
+    )
   }
 
   const handleEventUpdate = (idx: string) => {

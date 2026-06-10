@@ -20,13 +20,25 @@ export interface GET_CURRENT_USER_Interface {
     email: string;
     lastname: string;
     role: string;
-    avatar:string,
+    avatar: string;
     updatedAt: string;
     createdAt: string;
     id: string;
   };
 }
-export interface GET_EVENY_TYPE {
+
+export interface googleLogin_Interface {
+    googleLogin: {
+      user: {
+        email: string;
+        firstname: string;
+        googleId: string;
+        lastname: string;
+        id: number;
+      };
+    };
+  }
+export interface Get_EVENTS_TYPE {
   id: string;
   title: string;
   description: string;
@@ -45,7 +57,23 @@ export interface GET_EVENY_TYPE {
 }
 
 export interface Get_EVENTS_TYPE {
-  getEvents: [GET_EVENY_TYPE];
+  getEvents: [Get_EVENTS_TYPE];
+}
+
+export interface NEARBY_EVENT_Interface {
+  nearbyEvents: [
+    {
+      id:string
+      Eventlocation: string;
+      attendeeCount: number;
+      eventStartDate: string;
+      eventEndDate: string;
+      image: string;
+      categroy: string;
+      distance: number;
+      title: string;
+    },
+  ];
 }
 
 export interface Admin_Login_Interface {
@@ -198,9 +226,7 @@ export interface GET_ADMIN_USERS_Interface {
       googleId: null;
       phone: string;
       createdAt: string;
-      profile: {
-        profilePic: string;
-      };
+      avatar:string
     },
   ];
 }

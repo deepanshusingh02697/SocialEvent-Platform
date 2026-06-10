@@ -19,7 +19,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { closeChatPopup } = chatPopupContext();
 
-  const res = data?.currentUser?.firstname;
+  const res = data?.currentUser;
 
   const [logOutUser] = useMutation<Boolean>(POST_LOGOUT_MUTATION, {
     refetchQueries: [
@@ -62,15 +62,32 @@ export default function Navbar() {
       <div className={styles.container}>
         <div className={styles.con}>
           <NavLink className={`navlinkStyle ${styles.logo}`} to="/">
-            <RiCalendarEventLine /> {" "}
-            EventHub
+            <RiCalendarEventLine /> EventHub
           </NavLink>
-          <div
-            className={styles.profilelogo}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {res?.charAt(0).toUpperCase()}
-          </div>
+
+          {res?.avatar ? (
+            <img
+              src={res?.avatar}
+              alt="avatar"
+              style={{
+                width: "50px",
+                height: "50px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                padding: "0px",
+                border: "1px solid gray",
+              }}
+              onClick={() => setIsOpen(!isOpen)}
+            />
+          ) : (
+            <div
+              className={styles.profilelogo}
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {res?.firstname.charAt(0).toUpperCase()}
+            </div>
+          )}
+
           {isOpen && (
             <div className={styles.profilefilter}>
               <div

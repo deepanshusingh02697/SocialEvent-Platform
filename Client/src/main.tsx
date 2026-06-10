@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { ContextProvider } from "./Component/Context/PopupContext.tsx";
 import { ChatContextProvider } from "./Component/Context/ChatPopupContext.tsx";
 import { EditIdContextProvider } from "./Admin/AdminContext/AdminContext.tsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const httpLink = createHttpLink({
   uri: "http://localhost:4003/graphql",
@@ -24,14 +25,16 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ApolloProvider client={client}>
       <BrowserRouter>
-        <ContextProvider>
-          <ChatContextProvider>
-            <EditIdContextProvider>
-              <App />
-            </EditIdContextProvider>
-          </ChatContextProvider>
-          <ToastContainer />
-        </ContextProvider>
+        <GoogleOAuthProvider clientId="767198098702-auruaq6sa30ios6tvc3fbp3r4v40h2vm.apps.googleusercontent.com">
+          <ContextProvider>
+            <ChatContextProvider>
+              <EditIdContextProvider>
+                <App />
+              </EditIdContextProvider>
+            </ChatContextProvider>
+            <ToastContainer />
+          </ContextProvider>
+        </GoogleOAuthProvider>
       </BrowserRouter>
     </ApolloProvider>
   </StrictMode>,

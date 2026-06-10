@@ -313,6 +313,9 @@ export default function Profile() {
 
   const getUserProfileRes = getProfileData?.editUserProfile;
 
+  console.log("getProfile is : ",getUserProfileRes);
+  
+
   const userInterestIds = new Set(
     getUserProfileRes?.interests?.map((i) => String(i.interestId)) ?? [],
   );

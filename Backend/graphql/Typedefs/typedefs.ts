@@ -122,7 +122,8 @@ type Query{
 
 
     # getEvents: [Event!]!
-    getEvents(category:String, search:String,fromDate:String,toDate:String):[Event!]!
+    getEvents(category:String, search:String,fromDate:String,toDate:String,latitude: Float,longitude: Float):[Event!]!
+
     getEvent(eventId:ID!):Event
 
     nearbyEvents(latitude:Float! longitude:Float! radiusKm:Float! category:String):[Event!]!    
@@ -138,6 +139,7 @@ type Query{
     adminGetUsers(search:String):[User!]!
     adminGetEvents: [Event!]!
 }
+
 
 type Mutation{
     signUp(firstname:String!,lastname:String!,email:String!,password:String!):AuthResponse!

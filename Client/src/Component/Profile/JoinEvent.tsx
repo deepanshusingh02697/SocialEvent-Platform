@@ -5,7 +5,7 @@ import {
   FaClock,
   FaUsers,
 } from "react-icons/fa";
-import { RiDeleteBin6Fill } from "react-icons/ri";
+// import { RiDeleteBin6Fill } from "react-icons/ri";
 import {
   GET_ATTENDITES_ChatPopup,
   GET_USER_JOIN_QUERY,
@@ -16,14 +16,16 @@ import type {
 } from "../graphql/client";
 import { useQuery } from "@apollo/client/react";
 import { formatDate } from "../Context/conversion";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { chatPopupContext } from "../Context/ChatPopupContext";
 import ChatPopup from "../ChatPopup/ChatPopup";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 export default function JoinEvent() {
   const { setIsOpenChat } = chatPopupContext();
   const [isId, setIsId] = useState("");
+  const navigate = useNavigate();
 
   const { data, loading } =
     useQuery<GET_USER_JOIN_Interface>(GET_USER_JOIN_QUERY);
@@ -55,13 +57,11 @@ export default function JoinEvent() {
 
   console.log("joined event by user ", res);
 
-  if (loading) {
+     if (loading) {
     return (
-      <>
-        <div className="loading">
-          <p>Loading...</p>
-        </div>
-      </>
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
     );
   }
   return (
@@ -71,51 +71,60 @@ export default function JoinEvent() {
           <div className={styles.wrapper}>
             <h2 className={styles.title}>Joined Events</h2>
 
-            <div className={styles.list}>
-              {res.map((event) => (
-                <div key={event?.id} className={styles.card}>
-                  <NavLink to={`/event/${event.id}`}>
-                    <img
-                      src={event.image}
-                      alt={event?.image}
-                      className={styles.image}
-                    />
-                  </NavLink>
+            {res.length > 0 ? (
+              <div className={styles.list}>
+                {res.map((event) => (
+                  <div key={event?.id} className={styles.card}>
+                    <NavLink to={`/event/${event.id}`}>
+                      <img
+                        src={event.image}
+                        alt={event?.image}
+                        className={styles.image}
+                      />
+                    </NavLink>
 
-                  <div className={styles.info}>
-                    <span className={styles.category}>{event?.category}</span>
-                    <h3 className={styles.eventTitle}>{event?.title}</h3>
-                    <div className={styles.meta}>
+                    <div className={styles.info}>
+                      <span className={styles.category}>{event?.category}</span>
+                      <h3 className={styles.eventTitle}>{event?.title}</h3>
+                      <div className={styles.meta}>
+                        <span className={styles.metaItem}>
+                          <FaCalendarAlt className={styles.icon} />
+                          {formatDate(event?.eventStartDate)}
+                        </span>
+                        <span className={styles.metaItem}>
+                          <FaClock className={styles.icon} />
+                          {formatDate(event?.eventEndDate)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className={styles.right}>
+                      {/* <div>
+                        <RiDeleteBin6Fill />
+                      </div> */}
                       <span className={styles.metaItem}>
-                        <FaCalendarAlt className={styles.icon} />
-                        {formatDate(event?.eventStartDate)}
+                        <FaMapMarkerAlt className={styles.icon} />
+                        {event?.Eventlocation}
                       </span>
-                      <span className={styles.metaItem}>
-                        <FaClock className={styles.icon} />
-                        {formatDate(event?.eventEndDate)}
+                      <span
+                        className={styles.attendees}
+                        onClick={() => openChatPopup(event?.id)}
+                      >
+                        <FaUsers className={styles.icon} />
+                        {event?.attendeeCount - 1} attendees
                       </span>
                     </div>
                   </div>
-
-                  <div className={styles.right}>
-                    <div>
-                      <RiDeleteBin6Fill />
-                    </div>
-                    <span className={styles.metaItem}>
-                      <FaMapMarkerAlt className={styles.icon} />
-                      {event?.Eventlocation}
-                    </span>
-                    <span
-                      className={styles.attendees}
-                      onClick={() => openChatPopup(event?.id)}
-                    >
-                      <FaUsers className={styles.icon} />
-                      {event?.attendeeCount - 1} attendees
-                    </span>
-                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                <div className={styles.NotJoinCon}>
+                  <p>Join Events : </p>
+                  <button onClick={() => navigate("/")}>Join Events</button>
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>

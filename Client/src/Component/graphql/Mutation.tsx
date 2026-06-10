@@ -29,6 +29,20 @@ export const SIGNUP_MUTATION = gql`
   }
 `;
 
+export const Google_LogIn_Mutation = gql`
+  mutation Mutation($idToken: String!) {
+    googleLogin(idToken: $idToken) {
+      user {
+        email
+        firstname
+        googleId
+        lastname
+        id
+      }
+    }
+  }
+`;
+
 export const ADMIN_LOGIN_MUTATION = gql`
   mutation Mutation($email: String!, $password: String!) {
     adminlogIn(email: $email, password: $password) {

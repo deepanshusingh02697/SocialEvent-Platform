@@ -14,7 +14,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const httpLink = createHttpLink({
   // uri: "http://localhost:4003/graphql",
-  uri:"https://socialevent-platform-snhu.onrender.com",
+  uri:"https://socialevent-platform-client.onrender.com",
   credentials: "include",
 });
 const client = new ApolloClient({

@@ -104,7 +104,7 @@
 }
  
 .table thead th {
-  padding: 16px 18px;
+  padding:15px 10px;
   text-align: left;
   font-size: 13px;
   font-weight: 700;
@@ -127,7 +127,7 @@
 }
  
 .table td {
-  padding: 16px 18px;
+  padding: 10px;
   vertical-align: middle;
 }
  
@@ -161,7 +161,7 @@
 .eventDesc {
   font-size: 13px;
   color: #888;
-  max-width: 320px;
+  max-width:200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -210,6 +210,9 @@
 .location {
   font-size: 14px;
   color: #444;
+  max-width:100px;
+  white-space:wrap;
+  overflow: hidden;
 }
  
 .attendees {

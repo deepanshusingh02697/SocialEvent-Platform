@@ -5,12 +5,14 @@ import { FaEyeSlash } from "react-icons/fa";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useQuery } from "@apollo/client/react";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import type { Get_EVENTS_TYPE } from "../../../../Component/graphql/client";
 import { GET_EVENTS_QUERY } from "../../../../Component/graphql/Query";
 import { formatDate } from "../../../../Component/Context/conversion";
 import { useEditContext } from "../../../AdminContext/AdminContext";
+import { delete_Event_Mutation } from "../../../../Component/graphql/Mutation";
+import { toast } from "react-toastify";
 
 export default function AEvents() {
   const [isCatefory, setIsCategory] = useState("");
@@ -24,6 +26,15 @@ export default function AEvents() {
       search: isSearch === "" ? null : isSearch,
     },
   });
+  const [deleteEventM] = useMutation(delete_Event_Mutation, {
+    refetchQueries: [
+      {
+        query: GET_EVENTS_QUERY,
+      },
+    ],
+  });
+
+  useEffect(() => {}, [data]);
 
   const res = data?.getEvents || [];
   console.log("the res in admin event is : ", res);
@@ -36,7 +47,7 @@ export default function AEvents() {
             <p>No Event found</p>
             <button
               style={{ padding: "10px 15px" }}
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/")}
             >
               Back
             </button>
@@ -54,10 +65,25 @@ export default function AEvents() {
     navigate("/createevent");
   };
 
-  const handleEventView=(idx:string)=>{
-      setUpdateId(idx);
-      navigate(`/viewevent/${idx}`)
-  }
+  const handleEventView = (idx: string) => {
+    setUpdateId(idx);
+    navigate(`/viewevent/${idx}`);
+  };
+
+  const handleDeleteEvent = async (idx: string) => {
+    const res = await deleteEventM({
+      variables: {
+        eventId: idx,
+      },
+    });
+    if (res) {
+      toast("Event delete successfully", {
+        position: "top-right",
+        type: "success",
+      });
+    }
+  };
+
   return (
     <>
       <main className={styles.main}>
@@ -157,7 +183,7 @@ export default function AEvents() {
                       <div className={styles.actions}>
                         <button
                           className={`${styles.actionBtn} ${styles.actionView}`}
-                          onClick={()=>handleEventView(ele.id)}
+                          onClick={() => handleEventView(ele.id)}
                         >
                           <FaEyeSlash />
                         </button>
@@ -169,6 +195,7 @@ export default function AEvents() {
                         </button>
                         <button
                           className={`${styles.actionBtn} ${styles.actionDelete}`}
+                          onClick={() => handleDeleteEvent(ele.id)}
                         >
                           <RiDeleteBinFill />
                         </button>

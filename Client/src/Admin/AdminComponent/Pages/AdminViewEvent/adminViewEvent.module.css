@@ -99,6 +99,10 @@
   gap: 32px;
   margin-bottom: 32px;
 }
+.enddate{
+  border-left:2px solid rgb(93, 92, 92);
+  padding-left: 10px;
+}
  
 .infoList {
   display: flex;
@@ -210,6 +214,8 @@
  
   .mapBox {
     min-height: 160px;
+    padding: 0;
+    margin: 0;
   }
  
   .editBtn {
@@ -222,6 +228,7 @@
     align-items: flex-start;
   }
 }
+
  
 @media (max-width: 480px) {
   .heroImage,

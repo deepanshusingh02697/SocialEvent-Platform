@@ -10,6 +10,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IoPeopleCircleOutline } from "react-icons/io5";
 import { chatPopupContext } from "../Context/ChatPopupContext";
+import { RiCalendarEventLine } from "react-icons/ri";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,6 +62,7 @@ export default function Navbar() {
       <div className={styles.container}>
         <div className={styles.con}>
           <NavLink className={`navlinkStyle ${styles.logo}`} to="/">
+            <RiCalendarEventLine /> {" "}
             EventHub
           </NavLink>
           <div

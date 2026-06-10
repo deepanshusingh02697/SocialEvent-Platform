@@ -20,6 +20,7 @@ export interface GET_CURRENT_USER_Interface {
     email: string;
     lastname: string;
     role: string;
+    avatar:string,
     updatedAt: string;
     createdAt: string;
     id: string;
@@ -70,14 +71,6 @@ export interface Update_Profile_Interface {
     longitude: number;
     userId: number;
     id: number;
-    profilePic: string;
-  };
-}
-export interface GET_User_Profile_Interface {
-  getUserProfile: {
-    bio: string;
-    latitude: number;
-    longitude: number;
     profilePic: string;
   };
 }
@@ -190,5 +183,57 @@ export interface Post_CreateEvent_Interface {
 }
 export interface EditIdContextType {
   editId: string | null;
-  setUpdateId:(id: string)=> void;
+  setUpdateId: (id: string | null) => void;
+  ismaplatitude: number | null;
+  ismaplongitude: number | null;
+  setmaplatlongFunc: (lat: number | null, long: number | null) => void;
+}
+export interface GET_ADMIN_USERS_Interface {
+  adminGetUsers: [
+    {
+      id: string;
+      firstname: string;
+      lastname: string;
+      email: string;
+      googleId: null;
+      phone: string;
+      createdAt: string;
+      profile: {
+        profilePic: string;
+      };
+    },
+  ];
+}
+
+export interface AddInterest_Interface {
+  addInterest: {
+    interest: {
+      name: string;
+      id: string;
+    };
+  };
+}
+
+export interface Get_All_Interests_Interface {
+  getAllInterests: [
+    {
+      id: string;
+      name: string;
+    },
+  ];
+}
+
+export interface Interest_Interface {
+  interestId: string;
+}
+export interface Update_Profile_Interface {
+  editUserProfile: {
+    email: string;
+    firstname: string;
+    lastname: string;
+    updatedAt: string;
+    avatar: string;
+    id: string;
+    interests: [Interest_Interface];
+  };
 }

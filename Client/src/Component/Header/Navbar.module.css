@@ -17,6 +17,8 @@
   padding: 20px 0px;
 }
 .logo {
+  display: flex;
+  justify-content: center;
   font-size: 22px;
 }
 .profilelogo {

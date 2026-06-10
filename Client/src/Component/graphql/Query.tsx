@@ -7,6 +7,7 @@ export const GET_CURRENT_USER_QUERY = gql`
       firstname
       lastname
       email
+      avatar
       role
       createdAt
       updatedAt
@@ -58,6 +59,15 @@ export const GET_USER_PROFILE_QUERY = gql`
       latitude
       longitude
       profilePic
+    }
+  }
+`;
+
+export const GET_ALL_INTERESTS_QUERY = gql`
+  query Query {
+    getAllInterests {
+      id
+      name
     }
   }
 `;
@@ -133,7 +143,21 @@ export const Get_Message_Query = gql`
   }
 `;
 
-
 //* ADMIN */
 
-
+export const GET_ADMIN_USERS_QUERY = gql`
+  query Query($search: String) {
+    adminGetUsers(search: $search) {
+      id
+      firstname
+      lastname
+      email
+      googleId
+      phone
+      createdAt
+      profile {
+        profilePic
+      }
+    }
+  }
+`;

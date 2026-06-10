@@ -60,24 +60,43 @@ export const VERIFY_OTP_MUTATION = gql`
 
 export const UPDATE_PROFILE_MUTATION = gql`
   mutation Mutation(
-    $latitude: Float
-    $longitude: Float
-    $bio: String
-    $profilePic: String
+    $firstname: String
+    $lastname: String
+    $avatar: String
+    $email: String
   ) {
-    updateProfile(
-      latitude: $latitude
-      longitude: $longitude
-      bio: $bio
-      profilePic: $profilePic
+    editUserProfile(
+      firstname: $firstname
+      lastname: $lastname
+      avatar: $avatar
+      email: $email
     ) {
-      bio
-      latitude
-      longitude
-      userId
+      email
+      firstname
+      lastname
+      updatedAt
+      avatar
       id
-      profilePic
+      interests {
+        interestId
+      }
     }
+  }
+`;
+
+export const ADD_INTEREST_MUTATION = gql`
+  mutation Mutation($interestId: ID!) {
+    addInterest(interestId: $interestId) {
+      interest {
+        name
+        id
+      }
+    }
+  }
+`;
+export const REMOVE_INTEREST_MUTATION = gql`
+  mutation Mutation($interestId: ID!) {
+    removeInterest(interestId: $interestId)
   }
 `;
 
@@ -97,6 +116,10 @@ export const Leave_EVENT_MUTATION = gql`
     leaveEvent(eventId: $eventId)
   }
 `;
+
+/* export const ADD_INTEREST_MUTATION=gql`
+
+` */
 
 export const Message_MUTATION = gql`
   mutation Mutation($content: String!, $receiverId: Int!) {
@@ -191,5 +214,11 @@ export const Update_Event_Mutation = gql`
       createdAt
       updatedAt
     }
+  }
+`;
+
+export const delete_Event_Mutation = gql`
+  mutation Mutation($eventId: ID!) {
+    deleteEvent(eventId: $eventId)
   }
 `;

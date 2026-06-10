@@ -4,7 +4,7 @@ import {
   FaUsers,
   FaArrowLeft,
 } from "react-icons/fa";
-import { MdLocationOn } from "react-icons/md";
+// import { MdLocationOn } from "react-icons/md";
 import styles from "./eventDetail.module.css";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
@@ -25,6 +25,20 @@ import {
   Leave_EVENT_MUTATION,
 } from "../../Component/graphql/Mutation";
 import { toast } from "react-toastify";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 export default function EventDetails() {
   const { eventId } = useParams();
@@ -49,9 +63,9 @@ export default function EventDetails() {
   );
   const [leaveEvent] = useMutation<boolean>(Leave_EVENT_MUTATION, {
     refetchQueries: [
-      {query: GET_EVENT_DETAILS_QUERY},
+      { query: GET_EVENT_DETAILS_QUERY },
       { query: GET_EVENTS_QUERY },
-       { query: GET_USER_JOIN_QUERY },
+      { query: GET_USER_JOIN_QUERY },
     ],
   });
   const { data: checkJoinEvent } =
@@ -200,11 +214,30 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              <div className={styles.mapBox}>
+              {/* <div className={styles.mapBox}>
                 <MdLocationOn className="detailIcon" />
                 <p className={styles.mapLabel}>Map View</p>
                 <p className={styles.mapCoords}>Lat: 40.7829, Lng: -73.9654</p>
-              </div>
+              </div> */}
+              <MapContainer
+                center={[eventDetailData.latitude, eventDetailData.longitude]}
+                zoom={14}
+                style={{ width: "100%", height: "100%", borderRadius: "12px" }}
+                scrollWheelZoom={false}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker
+                  position={[
+                    eventDetailData.latitude,
+                    eventDetailData.longitude,
+                  ]}
+                >
+                  <Popup>{eventDetailData.Eventlocation}</Popup>
+                </Marker>
+              </MapContainer>
             </div>
 
             <div className={styles.divider} />

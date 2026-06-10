@@ -21,6 +21,7 @@ model User {
   updatedAt     DateTime           @updatedAt
   attendees     EventParticipant[]
   profile       Profile?
+  avatar        String?
   interests     UserInterest[]
 
   sentMessages    Message[] @relation("sentMessages")

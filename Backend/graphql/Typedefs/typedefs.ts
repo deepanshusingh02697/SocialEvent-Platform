@@ -20,6 +20,7 @@ type User{
     isActive: Boolean
 
     profile:Profile
+    avatar:String
 
     interests:[UserInterest]
     attendees:[EventParticipant]
@@ -134,7 +135,7 @@ type Query{
     getMessages(receiverId:Int!):[Message] #return array of message objects
 
     #Admin 
-    adminGetUsers(page:Int,limit:Int):[User!]!
+    adminGetUsers(search:String):[User!]!
     adminGetEvents: [Event!]!
 }
 
@@ -151,6 +152,7 @@ type Mutation{
     # update Profile
     updateProfile(latitude:Float,longitude:Float,bio:String,profilePic:String):Profile!
     deleteProfile:Boolean!
+    editUserProfile(firstname:String,lastname:String,avatar:String,email:String):User!
 
     #Interests
     addInterest(interestId:ID!):UserInterest!

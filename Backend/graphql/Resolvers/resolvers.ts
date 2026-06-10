@@ -154,13 +154,25 @@ export const resolvers = {
       return participants.map((p) => p.user);
     },
 
-    adminGetUsers: async (_: any, __: unknown, ctx: context) => {
+    adminGetUsers: async (_: any, args: { search?: string }, ctx: context) => {
       isAdmin(ctx);
       return prisma.user.findMany({
-        include: { profile: true },
+        where: {
+          ...(args.search && {
+            OR: [
+              { firstname: { contains: args.search, mode: "insensitive" } },
+              { lastname: { contains: args.search, mode: "insensitive" } },
+              { email: { contains: args.search, mode: "insensitive" } },
+              { phone: { contains: args.search, mode: "insensitive" } },
+            ],
+          }),
+          role: "USER",
+        },
+        include: { profile: true, attendees: { include: { event: true } } },
         orderBy: { createdAt: "desc" },
       });
     },
+
     adminGetEvents: async (_: any, __: any, ctx: context) => {
       isAdmin(ctx);
       return prisma.event.findMany({
@@ -511,6 +523,49 @@ export const resolvers = {
         throw new Error("Error in update profile ");
       }
     },
+    editUserProfile: async (
+      _: unknown,
+      args: {
+        firstname?: string;
+        lastname?: string;
+        avatar?: string;
+        email?: string;
+      },
+      ctx: context,
+    ) => {
+      try {
+        isAuth(ctx);
+
+        const existingProfile = await prisma.user.findUnique({
+          where: { id: ctx.userId! },
+        });
+
+        if (!existingProfile) {
+          throw new Error("Not authenticated- login first");
+        }
+        if (args.email && args.email !== existingProfile.email) {
+          const existEmail = await prisma.user.findUnique({
+            where: { email: args.email, NOT: { id: ctx.userId! } },
+          });
+          if (existEmail) {
+            throw new Error("Email already Exist - use another one");
+          }
+        }
+        return await prisma.user.update({
+          where: { id: ctx.userId! },
+          data: {
+            ...(args.firstname !== undefined && { firstname: args.firstname }),
+            ...(args.lastname !== undefined && { lastname: args.lastname }),
+            ...(args.email && { email: args.email }),
+            ...(args.avatar && { avatar: args.avatar }),
+          },
+          include: { interests: true },
+        });
+      } catch (error) {
+        console.error("update profile error : ", error);
+        throw Error
+      }
+    },
     deleteProfile: async (_: unknown, __: unknown, ctx: context) => {
       isAuth(ctx);
 
@@ -573,11 +628,17 @@ export const resolvers = {
     ) => {
       isAdmin(ctx);
 
+      if (!args.eventStartDate || !args.eventEndDate) {
+        throw new Error("kindly do select start and end date");
+      }
+
       const eventStartDate = new Date(args.eventStartDate);
       const eventEndDate = new Date(args.eventEndDate);
 
-      if (eventEndDate <= eventStartDate) {
-        throw new Error("End date/time must be after start date/time");
+      if (args.eventStartDate && args.eventEndDate) {
+        if (eventEndDate <= eventStartDate) {
+          throw new Error("End date/time must be after start date/time");
+        }
       }
 
       return await prisma.event.create({
@@ -607,7 +668,7 @@ export const resolvers = {
         longitude: number;
         eventStartDate: string;
         eventEndDate: string;
-        image:string
+        image: string;
       },
       ctx: context,
     ) => {
@@ -621,8 +682,8 @@ export const resolvers = {
 
       // const startDate = args.eventStartDate+":00.000Z";
       // const endDate = args.eventEndDate+":00.000Z"
-            const startDate = new Date(args.eventStartDate)
-      const endDate = new Date(args.eventEndDate)
+      const startDate = new Date(args.eventStartDate);
+      const endDate = new Date(args.eventEndDate);
 
       if (startDate && endDate) {
         if (endDate <= startDate) {
@@ -640,7 +701,7 @@ export const resolvers = {
           ...(args.category && { category: args.category }),
           ...(startDate && { eventStartDate: startDate }),
           ...(endDate && { eventEndDate: endDate }),
-          ...(args.image && {image:args.image})
+          ...(args.image && { image: args.image }),
         },
       });
     },

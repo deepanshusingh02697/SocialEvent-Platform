@@ -1,55 +1,51 @@
 .wrapper {
   padding: 32px;
-  /* background: #f5f5f5; */
   background: #ffffff;
   border-radius: 20px;
   margin-top: 13px;
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
 }
-
+ 
 .title {
   font-size: 25px;
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 24px;
 }
-
+ 
 .list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
+ 
 .card {
   display: flex;
-  align-items: center;
   gap: 16px;
   background: #ffffff;
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  align-items: flex-start;
 }
-
+ 
 .image {
   width: 110px;
   height: 100px;
-  border-radius: 10px;
+  border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-  border-radius: 50%;
-  /* border: 2px solid gray; */
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-
 }
-
-
+ 
 .info {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
-
+ 
 .category {
   display: inline-block;
   background: #e8f0fe;
@@ -60,20 +56,23 @@
   border-radius: 20px;
   width: fit-content;
 }
-
+ 
 .eventTitle {
   font-size: 18px;
   font-weight: 700;
   color: #1a1a2e;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
+ 
 .meta {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
+ 
 .metaItem {
   display: flex;
   align-items: center;
@@ -81,20 +80,31 @@
   font-size: 16px;
   color: #555;
 }
-
+ 
 .icon {
   color: #888;
   font-size: 16px;
+  flex-shrink: 0;
 }
-
+ 
 .right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
   flex-shrink: 0;
-  }
-
+}
+ 
+.deleteBtn {
+  color: #e53e3e;
+  cursor: pointer;
+  font-size: 18px;
+}
+ 
+.deleteBtn:hover {
+  color: #c53030;
+}
+ 
 .attendees {
   display: flex;
   align-items: center;
@@ -104,4 +114,94 @@
   color: #3b5bdb;
   cursor: pointer;
   text-decoration: underline;
+}
+ 
+/* Tablet ≤ 768px */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+ 
+  .title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+ 
+  .card {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+ 
+  .image {
+    width: 80px;
+    height: 80px;
+  }
+ 
+  .eventTitle {
+    font-size: 16px;
+  }
+ 
+  .metaItem {
+    font-size: 14px;
+  }
+ 
+  .right {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
+  }
+}
+ 
+/* Mobile ≤ 480px */
+@media (max-width: 480px) {
+  .wrapper {
+    padding: 16px 12px;
+    border-radius: 12px;
+    margin-top: 8px;
+  }
+ 
+  .title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+ 
+  .card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 12px;
+  }
+ 
+  .image {
+    width: 70px;
+    height: 70px;
+  }
+ 
+  .eventTitle {
+    font-size: 15px;
+    white-space: normal;
+  }
+ 
+  .metaItem {
+    font-size: 13px;
+  }
+ 
+  .right {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
+  }
+ 
+  .attendees {
+    font-size: 13px;
+  }
 }

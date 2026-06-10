@@ -253,6 +253,9 @@
   .serachNear {
     flex-direction: column;
   }
+  .searchInput{
+    width: 100%;
+  }
  
   .serachBtn {
     width: 100%;

@@ -18,16 +18,24 @@ const httpServer = createServer(app);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
+    origin: [
+      "http://localhost:5173",   // For Local
+       "https://socialevent-platform-client.onrender.com" //For Production
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-  }),
+    optionsSuccessStatus: 200,
+  })
 );
 
 //frontend as well
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",   // For Local
+       "https://socialevent-platform-client.onrender.com" //For Production
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },

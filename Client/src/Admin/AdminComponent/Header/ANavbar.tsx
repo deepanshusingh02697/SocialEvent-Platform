@@ -9,16 +9,16 @@ import { POST_LOGOUT_MUTATION } from "../../../Component/graphql/Mutation";
 import { GET_CURRENT_USER_QUERY } from "../../../Component/graphql/Query";
 import { useApolloClient, useMutation } from "@apollo/client/react";
 import { toast } from "react-toastify";
- 
+
 export default function ANavbar() {
   const client = useApolloClient();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
- 
+
   const [logOutUser] = useMutation<Boolean>(POST_LOGOUT_MUTATION, {
     refetchQueries: [{ query: GET_CURRENT_USER_QUERY }],
   });
- 
+
   const handleLogout = async () => {
     try {
       await logOutUser();
@@ -38,9 +38,9 @@ export default function ANavbar() {
       }
     }
   };
- 
+
   const closeMenu = () => setMenuOpen(false);
- 
+
   return (
     <div>
       <nav className={styles.navbar}>
@@ -48,7 +48,7 @@ export default function ANavbar() {
           <MdOutlineEvent />
           EventHub Admin
         </NavLink>
- 
+
         <div className={styles.navLinks}>
           <NavLink to="/admin">
             <button className={`${styles.navLink}`}>
@@ -67,7 +67,7 @@ export default function ANavbar() {
             Logout
           </button>
         </div>
- 
+
         <button
           className={styles.hamburger}
           onClick={() => setMenuOpen((prev) => !prev)}
@@ -76,16 +76,16 @@ export default function ANavbar() {
           {menuOpen ? <RiCloseLine /> : <RiMenu3Line />}
         </button>
       </nav>
- 
+
       {menuOpen && (
         <div className={styles.mobileMenu}>
-          <NavLink to="/" onClick={closeMenu}>
+          <NavLink to="/admin" onClick={closeMenu}>
             <button className={styles.mobileLink}>
               <MdOutlineEventAvailable />
               Events
             </button>
           </NavLink>
-          <NavLink to="/users" onClick={closeMenu}>
+          <NavLink to="/admin/users" onClick={closeMenu}>
             <button className={styles.mobileLink}>
               <RiUserSharedFill />
               Users
@@ -93,7 +93,10 @@ export default function ANavbar() {
           </NavLink>
           <button
             className={styles.mobileLogout}
-            onClick={() => { closeMenu(); handleLogout(); }}
+            onClick={() => {
+              closeMenu();
+              handleLogout();
+            }}
           >
             <LuLogOut />
             Logout

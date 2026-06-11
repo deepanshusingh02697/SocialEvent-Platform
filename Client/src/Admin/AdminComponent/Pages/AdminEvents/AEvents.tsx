@@ -76,7 +76,7 @@ export default function AEvents() {
     <>
       <main className={styles.main}>
         <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>All Events</h1>
+          <h3 className={styles.pageTitle}>All Events</h3>
           <button
             className={styles.createBtn}
             onClick={() => navigate("/admin/createevent")}

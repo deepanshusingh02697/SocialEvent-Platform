@@ -40,7 +40,6 @@ export default function ACreateEvent() {
 
   const navigate = useNavigate();
 
-  //  map coordinates from context
   const { editId, setUpdateId, ismaplatitude, ismaplongitude } =
     useEditContext();
 
@@ -66,7 +65,7 @@ export default function ACreateEvent() {
 
   const res = data?.getEvent;
 
-  //  fetch human-readable location from lat/lng using Nominatim website to show the address
+  //  fetch human-readable location from lat/longi using Nominatim website to show the address
   const fetchLocationName = async (lat: string, lng: string) => {
     try {
       const response = await fetch(
@@ -177,7 +176,6 @@ export default function ACreateEvent() {
             description: formInput.description,
             category: formInput.category,
             eventlocation: formInput.location,
-            // convert to ISO before sending
             eventStartDate: formInput.startDateTime,
             eventEndDate: formInput.endDateTime,
             latitude: formInput.latitude
@@ -222,7 +220,6 @@ export default function ACreateEvent() {
         }
       }
 
-      // reset
       setFormInput({
         title: "",
         description: "",
@@ -360,7 +357,7 @@ export default function ACreateEvent() {
                 />
               </div>
 
-              {/* LAT / LNG — auto-filled from map click using api*/}
+              {/* LAT / LONG — autofill from map click using api*/}
               <div className={styles.row}>
                 <div>
                   <label className={styles.label}>Latitude</label>

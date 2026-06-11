@@ -8,17 +8,18 @@ import type {
   Update_Profile_Interface,
   Get_All_Interests_Interface,
   AddInterest_Interface,
+  GET_CURRENT_USER_Interface,
 } from "../graphql/client";
 import {
-  GET_USER_PROFILE_QUERY,
   GET_ALL_INTERESTS_QUERY,
-} from "../graphql/Query"; 
+  GET_CURRENT_USER_QUERY,
+} from "../graphql/Query";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
   UPDATE_PROFILE_MUTATION,
   ADD_INTEREST_MUTATION,
   REMOVE_INTEREST_MUTATION,
-} from "../graphql/Mutation"; 
+} from "../graphql/Mutation";
 import { useAuth } from "../Context/AuthContext";
 import axios from "axios";
 
@@ -35,19 +36,20 @@ export default function Profile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageFileRef = useRef<File | null>(null);
 
-  const { data: getProfileData} =
-    useQuery<Update_Profile_Interface>(GET_USER_PROFILE_QUERY, {
+  const { data: getProfileData } = useQuery<GET_CURRENT_USER_Interface>(
+    GET_CURRENT_USER_QUERY,
+    {
       variables: { userId: authUserData?.id },
-    });
+    },
+  );
 
   const { data: allInterestsData } = useQuery<Get_All_Interests_Interface>(
     GET_ALL_INTERESTS_QUERY,
   );
 
-  const getUserProfileRes = getProfileData?.editUserProfile;
+  const getUserProfileRes = getProfileData?.currentUser;
 
-  console.log("getProfile is : ",getUserProfileRes);
-  
+  console.log("getProfile of user interest is : ", getUserProfileRes);
 
   const userInterestIds = new Set(
     getUserProfileRes?.interests?.map((i) => String(i.interestId)) ?? [],
@@ -62,7 +64,7 @@ export default function Profile() {
     {
       refetchQueries: [
         {
-          query: GET_USER_PROFILE_QUERY,
+          query: GET_CURRENT_USER_QUERY,
           variables: { userId: authUserData?.id },
         },
       ],
@@ -71,7 +73,7 @@ export default function Profile() {
   const [removeInterest] = useMutation<boolean>(REMOVE_INTEREST_MUTATION, {
     refetchQueries: [
       {
-        query: GET_USER_PROFILE_QUERY,
+        query: GET_CURRENT_USER_QUERY,
         variables: { userId: authUserData?.id },
       },
     ],
@@ -205,14 +207,14 @@ export default function Profile() {
                   <MdCameraAlt size={28} />
                 )}
               </div>
-              {isOpen && (
-                <div
-                  className={styles.cameraOverlay}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <MdCameraAlt size={16} />
-                </div>
-              )}
+              {/* {isOpen && ( */}
+              <div
+                className={styles.cameraOverlay}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <MdCameraAlt size={16} />
+              </div>
+              {/* )} */}
             </div>
 
             <div className={styles.headerInfo}>
@@ -231,55 +233,53 @@ export default function Profile() {
 
           <hr className={styles.divider} />
 
-          {isOpen && (
-            <>
-              <form className={styles.form} onSubmit={handleSaveSubmit}>
-                <div className={styles.formGrid}>
-                  <div className={styles.field}>
-                    <label className={styles.label}>First Name</label>
-                    <input
-                      className={styles.input}
-                      type="text"
-                      value={firstname}
-                      placeholder="First name..."
-                      onChange={(e) => setFirstname(e.target.value)}
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className={styles.label}>Last Name</label>
-                    <input
-                      className={styles.input}
-                      type="text"
-                      value={lastname}
-                      placeholder="Last name..."
-                      onChange={(e) => setLastname(e.target.value)}
-                    />
-                  </div>
-                </div>
+          {/* {isOpen && ( */}
+          <form className={styles.form} onSubmit={handleSaveSubmit}>
+            <div className={styles.formGrid}>
+              <div className={styles.field}>
+                <label className={styles.label}>First Name</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  value={firstname}
+                  placeholder={authUserData?.firstname.toUpperCase()}
+                  onChange={(e) => setFirstname(e.target.value)}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Last Name</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  value={lastname}
+                  placeholder={authUserData?.lastname.toUpperCase()}
+                  onChange={(e) => setLastname(e.target.value)}
+                />
+              </div>
+            </div>
 
-                <div className={styles.field}>
-                  <label className={styles.label}>Email</label>
-                  <input
-                    className={styles.input}
-                    type="email"
-                    value={email}
-                    placeholder="Email address..."
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Email</label>
+              <input
+                className={styles.input}
+                type="email"
+                value={email}
+                placeholder={authUserData?.email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-                <button
-                  className={styles.saveBtn}
-                  type="submit"
-                  disabled={uploading}
-                >
-                  <MdOutlineSaveAlt />
-                  {uploading ? "Saving..." : "Save Changes"}
-                </button>
-              </form>
-              <hr className={styles.divider} style={{ margin: "8px 0 28px" }} />
-            </>
-          )}
+            <button
+              className={styles.saveBtn}
+              type="submit"
+              disabled={uploading}
+            >
+              <MdOutlineSaveAlt />
+              {uploading ? "Saving..." : "Save Changes"}
+            </button>
+          </form>
+          <hr className={styles.divider} style={{ margin: "8px 0 28px" }} />
+          {/* )} */}
 
           <div className={styles.interestsSection}>
             <div className={styles.sectionTitle}>
@@ -289,7 +289,7 @@ export default function Profile() {
             <div className={styles.tags}>
               {allInterestsData?.getAllInterests.map((interest) => {
                 const isActive = userInterestIds.has(String(interest.id));
-                console.log(isActive);
+                console.log("user interest is : ", isActive);
 
                 const isLoading = togglingId === Number(interest.id);
 

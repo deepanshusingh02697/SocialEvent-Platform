@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_CURRENT_USER_QUERY = gql`
+/* export const GET_CURRENT_USER_QUERY = gql`
   query Query {
     currentUser {
       id
@@ -11,6 +11,24 @@ export const GET_CURRENT_USER_QUERY = gql`
       role
       createdAt
       updatedAt
+    }
+  }
+`; */
+export const GET_CURRENT_USER_QUERY = gql`
+  query Query {
+    currentUser {
+      id
+      firstname
+      lastname
+      email
+      role
+      avatar
+      createdAt
+      updatedAt
+      interests {
+        userId
+        interestId
+      }
     }
   }
 `;
@@ -52,7 +70,7 @@ export const GET_EVENTS_QUERY = gql`
     }
   }
 `;
-export const GET_USER_PROFILE_QUERY = gql`
+/* export const GET_USER_PROFILE_QUERY = gql`
   query Query($userId: ID!) {
     getUserProfile(userId: $userId) {
       bio
@@ -61,7 +79,7 @@ export const GET_USER_PROFILE_QUERY = gql`
       profilePic
     }
   }
-`;
+`; */
 
 export const GET_ALL_INTERESTS_QUERY = gql`
   query Query {

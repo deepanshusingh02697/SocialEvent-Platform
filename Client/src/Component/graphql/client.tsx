@@ -16,14 +16,20 @@ export interface verifyOtpType {
 }
 export interface GET_CURRENT_USER_Interface {
   currentUser: {
+    id: string;
     firstname: string;
-    email: string;
     lastname: string;
+    email: string;
     role: string;
     avatar: string;
-    updatedAt: string;
     createdAt: string;
-    id: string;
+    updatedAt: string;
+    interests: [
+      {
+        userId: number;
+        interestId: number;
+      },
+    ];
   };
 }
 export interface SignupResponseData {
@@ -38,16 +44,16 @@ export interface SignupResponseData {
 }
 
 export interface googleLogin_Interface {
-    googleLogin: {
-      user: {
-        email: string;
-        firstname: string;
-        googleId: string;
-        lastname: string;
-        id: number;
-      };
+  googleLogin: {
+    user: {
+      email: string;
+      firstname: string;
+      googleId: string;
+      lastname: string;
+      id: number;
     };
-  }
+  };
+}
 export interface Get_EVENTS_TYPE {
   id: string;
   title: string;
@@ -73,7 +79,7 @@ export interface Get_EVENTS_TYPE {
 export interface NEARBY_EVENT_Interface {
   nearbyEvents: [
     {
-      id:string
+      id: string;
       Eventlocation: string;
       attendeeCount: number;
       eventStartDate: string;
@@ -236,7 +242,7 @@ export interface GET_ADMIN_USERS_Interface {
       googleId: null;
       phone: string;
       createdAt: string;
-      avatar:string
+      avatar: string;
     },
   ];
 }

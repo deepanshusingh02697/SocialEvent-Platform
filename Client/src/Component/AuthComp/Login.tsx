@@ -322,7 +322,7 @@ export default function Login() {
                   />
                 </div>
                 <button type="submit" className={styles.submitbtn}>
-                  Sent OTP
+                  Send OTP
                 </button>
               </form>
               <div className={styles.toggleText}>

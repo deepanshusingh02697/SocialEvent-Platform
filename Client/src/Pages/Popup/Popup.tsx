@@ -73,7 +73,7 @@ export default function Popup() {
       toast("Do login correctly ", {
         position: "top-right",
         type: "warning",
-        theme: "colored",
+        theme: "colored", 
       });
       navigate("/login");
     } */

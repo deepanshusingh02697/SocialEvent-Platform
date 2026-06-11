@@ -188,6 +188,7 @@ export const resolvers = {
       const categoryFilter = args.category
         ? `AND category = '${args.category}'`
         : "";
+      // const searchFilter = args.search ? `AND search = '${args.search}'` : "";
 
       const events = await prisma.$queryRawUnsafe<any[]>(`
         SELECT *,
@@ -362,8 +363,8 @@ export const resolvers = {
           audience: process.env.GOOGLE_CLIENT_ID!,
         });
 
-        console.log("Google ticket is : ",ticket);
-        
+        console.log("Google ticket is : ", ticket);
+
         const payload = ticket.getPayload();
         console.log("payload by generating with google client id : ", payload);
 
@@ -371,10 +372,15 @@ export const resolvers = {
           throw new Error("Invalid Google Account");
         }
 
-        console.log("Google payload is : ",payload);
-        
+        console.log("Google payload is : ", payload);
 
-        const { sub: googleId, email, given_name, family_name,picture } = payload;
+        const {
+          sub: googleId,
+          email,
+          given_name,
+          family_name,
+          picture,
+        } = payload;
 
         let user = await prisma.user.findFirst({
           where: {
@@ -531,7 +537,7 @@ export const resolvers = {
             otpMsg: "OTP verified - login successfully",
           };
         } else if (verifyCheck.status === "expired") {
-          const err = Error
+          const err = Error;
           throw new Error("OTP expired- please login and try again");
         } else {
           throw new Error("Invalid OTP code- please try again");

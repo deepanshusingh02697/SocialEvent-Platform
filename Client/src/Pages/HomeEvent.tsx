@@ -23,6 +23,7 @@ export default function HomeEvent() {
   const [isDate, setIsDate] = useState("");
   const [isDistance, setIsDistance] = useState(0);
   const [isNearbyMode, setIsNearbyMode] = useState(false);
+  const [isallowloc, setIsallowloc] = useState(false);
 
   const [userCoords, setUserCoords] = useState<{
     lat: number;
@@ -82,14 +83,13 @@ export default function HomeEvent() {
     });
 
   const findNearByEvents = () => {
-    if (isDistance < 1) {
+    /* if (isallowloc === true && isDistance < 1) {
       toast("Please select the Distance", {
         position: "top-right",
         type: "info",
       });
       return;
-    }
-
+    } */
     if (!navigator.geolocation) {
       toast("Geolocation not supported by your browser", {
         position: "top-right",
@@ -100,6 +100,7 @@ export default function HomeEvent() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        setIsallowloc(true);
         const { latitude, longitude } = position.coords;
         setUserCoords({ lat: latitude, lng: longitude });
         setIsNearbyMode(true);
@@ -109,36 +110,38 @@ export default function HomeEvent() {
           autoClose: 1500,
         });
       },
-      () => {
-        toast("Location access denied", {
-          position: "top-right",
-          type: "error",
-        });
+      (error) => {
+        if (error) {
+          toast("Allow your Location", {
+            position: "top-right",
+            type: "error",
+          });
+          return;
+        }
       },
     );
   };
 
   const resetNearby = () => {
     setIsNearbyMode(false);
+    setIsallowloc(false);
     setUserCoords(null);
     setIsDistance(0);
   };
 
   const isLoading = isNearbyMode ? nearbyLoading : loading;
+
   const res = isNearbyMode
     ? nearbyData?.nearbyEvents || []
     : data?.getEvents || [];
 
-
-  console.log("res is for nearbyevent : ",res);
-  
+  console.log("res is for nearbyevent : ", res);
 
   const uniqueCategories = [
     "All",
     ...new Set(res.map((cur: any) => cur.category)),
   ];
 
-  
   if (isLoading) {
     return (
       <div className="loadingOverlay">
@@ -212,20 +215,25 @@ export default function HomeEvent() {
                   />
                 </div>
               )}
-
-              <div className={styles.filterBlock}>
-                <div>Distance: {isDistance} km</div>
-                <input
-                  type="range"
-                  min="1"
-                  max="50"
-                  className={styles.filterCon}
-                  value={isDistance}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setIsDistance(Number(e.target.value))
-                  }
-                />
-              </div>
+              {isallowloc ? (
+                <>
+                  <div className={styles.filterBlock}>
+                    <div>Distance: {isDistance} km</div>
+                    <input
+                      type="range"
+                      min="1"
+                      max="50"
+                      className={styles.filterCon}
+                      value={isDistance}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setIsDistance(Number(e.target.value))
+                      }
+                    />
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
 
@@ -249,7 +257,7 @@ export default function HomeEvent() {
                       <div>
                         {ele.distance
                           ? `${(ele.distance * 1.60934).toFixed(1)} km away`
-                          : "Distance unknown"}
+                          : ""}
                       </div>
                     </div>
                     <h4>{ele.title}</h4>

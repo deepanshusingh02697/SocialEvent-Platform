@@ -61,20 +61,30 @@ export default function Popup() {
       return;
     }
     const res = response?.data?.verifyOTP;
-    if (res?.success) {
+    try {
+      if (res?.success) {
       toast(res?.message, {
         position: "top-right",
         type: "success",
         theme: "colored",
       });
       navigate("/");
-    } else {
+    }/*  else {
       toast("Do login correctly ", {
         position: "top-right",
         type: "warning",
         theme: "colored",
       });
       navigate("/login");
+    } */
+    } catch (err) {
+      const error = err as Error
+      toast(error.message, {
+        position: "top-right",
+        type: "warning",
+        theme: "colored",
+      });
+      navigate("/login")
     }
   };
 

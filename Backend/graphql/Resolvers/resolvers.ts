@@ -531,6 +531,7 @@ export const resolvers = {
             otpMsg: "OTP verified - login successfully",
           };
         } else if (verifyCheck.status === "expired") {
+          const err = Error
           throw new Error("OTP expired- please login and try again");
         } else {
           throw new Error("Invalid OTP code- please try again");

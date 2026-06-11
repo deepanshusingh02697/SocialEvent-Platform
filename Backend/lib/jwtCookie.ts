@@ -21,35 +21,29 @@ export const signRefreshToken = (userId: number, role: Role): string => {
   return jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: "7d" });
 };
 export const signTempToken = (userId: number): string => {
-  return jwt.sign({ userId}, TEMP_SECRET, { expiresIn: "10min" });
+  return jwt.sign({ userId }, TEMP_SECRET, { expiresIn: "10min" });
 };
 
 export const accessCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as
-    | "none"
-    | "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
   maxAge: 1000 * 60 * 60 * 10,
 };
 
 export const refreshCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as
-    | "none"
-    | "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
   maxAge: 1000 * 60 * 60 * 24 * 7,
 };
 
 export const tempCookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as
-    | "none"
-    | "lax",
+  httpOnly: true, 
+  secure: true,
+  sameSite: "none",
   path: "/",
   maxAge: 1000 * 60 * 10,
 };

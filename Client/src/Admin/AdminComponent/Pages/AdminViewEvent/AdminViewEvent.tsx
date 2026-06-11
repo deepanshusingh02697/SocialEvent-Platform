@@ -56,9 +56,9 @@ export default function AdminViewEvent() {
         <div className={styles.card}>
           <div className={styles.topRow}>
             <span className={styles.badge}>{res.category}</span>
-            <button className={styles.editBtn}>
+            {/* <button className={styles.editBtn}>
               <FaRegEdit /> Edit Event
-            </button>
+            </button> */}
           </div>
           <h1 className={styles.eventTitle}>{res.title}</h1>
           <div className={styles.infoMapRow}>

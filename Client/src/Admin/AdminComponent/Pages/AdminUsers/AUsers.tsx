@@ -4,7 +4,7 @@ import styles from "./auser.module.css";
 import { useQuery } from "@apollo/client/react";
 import { GET_ADMIN_USERS_QUERY } from "../../../../Component/graphql/Query";
 import type { GET_ADMIN_USERS_Interface } from "../../../../Component/graphql/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 export default function AUsers() {

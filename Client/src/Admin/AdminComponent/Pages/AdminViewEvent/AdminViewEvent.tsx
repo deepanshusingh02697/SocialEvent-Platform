@@ -1,6 +1,6 @@
 import styles from "./adminViewEvent.module.css";
 import { IoReturnUpBack } from "react-icons/io5";
-import { FaRegEdit } from "react-icons/fa";
+// import { FaRegEdit } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
 import { FiMapPin } from "react-icons/fi";
 import { MdPeopleAlt } from "react-icons/md";

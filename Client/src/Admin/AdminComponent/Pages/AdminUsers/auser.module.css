@@ -285,7 +285,14 @@
   .table tbody td:nth-child(5) {
     display: none;
   }
- 
+
+  .email{
+    display: flex;
+    width: 150px;
+    flex-wrap: wrap;
+    overflow: hidden;
+  }
+
   .avatar,
   .avatarPlaceholder {
     width: 36px;

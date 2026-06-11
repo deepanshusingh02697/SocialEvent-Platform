@@ -243,6 +243,11 @@ export interface GET_ADMIN_USERS_Interface {
       phone: string;
       createdAt: string;
       avatar: string;
+      attendees: [
+        {
+          eventId: number;
+        },
+      ];
     },
   ];
 }

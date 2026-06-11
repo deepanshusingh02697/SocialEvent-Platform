@@ -27,7 +27,7 @@ export const signTempToken = (userId: number): string => {
 export const accessCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "none",
+  sameSite: "none" as const,
   path: "/",
   maxAge: 1000 * 60 * 60 * 10,
 };
@@ -35,7 +35,7 @@ export const accessCookieOptions = {
 export const refreshCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "none",
+  sameSite: "none" as const,
   path: "/",
   maxAge: 1000 * 60 * 60 * 24 * 7,
 };
@@ -43,7 +43,7 @@ export const refreshCookieOptions = {
 export const tempCookieOptions = {
   httpOnly: true, 
   secure: true,
-  sameSite: "none",
+  sameSite: "none" as const,
   path: "/",
   maxAge: 1000 * 60 * 10,
 };

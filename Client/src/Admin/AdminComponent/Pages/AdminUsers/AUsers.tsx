@@ -4,13 +4,11 @@ import styles from "./auser.module.css";
 import { useQuery } from "@apollo/client/react";
 import { GET_ADMIN_USERS_QUERY } from "../../../../Component/graphql/Query";
 import type { GET_ADMIN_USERS_Interface } from "../../../../Component/graphql/client";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 export default function AUsers() {
   const [isSearch, setIsSearch] = useState("");
-  const navigate = useNavigate();
   const { data, loading } = useQuery<GET_ADMIN_USERS_Interface>(
     GET_ADMIN_USERS_QUERY,
     {
@@ -20,8 +18,6 @@ export default function AUsers() {
     },
   );
 
-  const res = data?.adminGetUsers || [];
-  console.log("the res in admin Users is : ", res);
   if (loading) {
     return (
       <div className="loadingOverlay">
@@ -29,22 +25,27 @@ export default function AUsers() {
       </div>
     );
   }
-  if (!res.length) {
-    return (
-      <>
-        <div className="loading">
-          <div>
-            <p>No Event found</p>
-            <button
-              style={{ padding: "10px 15px" }}
-              onClick={() => navigate("/admin/users")}
-            >
-              Back
-            </button>
-          </div>
-        </div>
-      </>
-    );
+
+  const res = data?.adminGetUsers || [];
+  console.log("the res in admin Users is : ", res);
+
+  function debounce(fn: any, delay: number) {
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    return function (this: any, ...args: any[]) {
+      if (timerId !== undefined) clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        fn.apply(this, args);
+      }, delay);
+    };
+  }
+
+  function callback(text: string) {
+    setIsSearch(text);
+  }
+  const handledebounce = debounce(callback, 500);
+
+  function handleDebounceSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    handledebounce(e.target.value);
   }
 
   return (
@@ -60,9 +61,7 @@ export default function AUsers() {
             type="text"
             placeholder="Search users..."
             value={isSearch}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setIsSearch(e.target.value)
-            }
+            onChange={(e) => handleDebounceSearch(e)}
           />
         </div>
       </div>
@@ -76,13 +75,13 @@ export default function AUsers() {
               <th>Email</th>
               <th>Phone</th>
               <th>Registered Date</th>
-              {/* <th>Events Joined</th> */}
+              <th>Events Joined</th>
             </tr>
           </thead>
           <tbody>
             {res.map((ele) => {
               return (
-                <tr>
+                <tr key={ele.id}>
                   <td>
                     <div className={styles.avatarPlaceholder}>
                       {/* <IoPersonCircle /> */}
@@ -95,7 +94,9 @@ export default function AUsers() {
                     </span>
                   </td>
                   <td>
-                    <span className={styles.cellText}>{ele.email}</span>
+                    <span className={`${styles.cellText} ${styles.email}`}>
+                      {ele.email}
+                    </span>
                   </td>
                   <td>
                     <span className={styles.cellText}>{ele.phone}</span>
@@ -111,9 +112,13 @@ export default function AUsers() {
                       )}
                     </span>
                   </td>
-                  {/* <td>
-                    <span className={styles.eventsCount}>3</span>
-                  </td> */}
+                  <td>
+                    <span className={styles.eventsCount}>
+                      {ele?.attendees?.reduce((accumulator, attendee) => {
+                        return accumulator + (attendee?.eventId && 1);
+                      }, 0)}
+                    </span>
+                  </td>
                 </tr>
               );
             })}

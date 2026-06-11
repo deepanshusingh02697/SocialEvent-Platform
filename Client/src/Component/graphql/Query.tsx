@@ -1,19 +1,5 @@
 import { gql } from "@apollo/client";
 
-/* export const GET_CURRENT_USER_QUERY = gql`
-  query Query {
-    currentUser {
-      id
-      firstname
-      lastname
-      email
-      avatar
-      role
-      createdAt
-      updatedAt
-    }
-  }
-`; */
 export const GET_CURRENT_USER_QUERY = gql`
   query Query {
     currentUser {
@@ -193,6 +179,9 @@ export const GET_ADMIN_USERS_QUERY = gql`
       phone
       createdAt
       avatar
+      attendees {
+        eventId
+      }
     }
   }
 `;

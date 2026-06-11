@@ -72,6 +72,25 @@ export default function AEvents() {
     }
   };
 
+  function debounce(fn: any, delay: number) {
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    return function (this: any, ...args: any[]) {
+      if (timerId !== undefined) clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        fn.apply(this, args);
+      }, delay);
+    };
+  }
+
+  function callback(text: string) {
+    setIsSearch(text);
+  }
+  const handledebounce = debounce(callback, 500);
+
+  function handleDebounceSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    handledebounce(e.target.value);
+  }
+
   return (
     <>
       <main className={styles.main}>
@@ -95,9 +114,7 @@ export default function AEvents() {
               className={styles.searchInput}
               type="text"
               placeholder="Search events..."
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setIsSearch(e.target.value)
-              }
+              onChange={handleDebounceSearch}
             />
           </div>
           <select
@@ -128,75 +145,70 @@ export default function AEvents() {
               </tr>
             </thead>
             <tbody>
-
-                  {res.map((ele) => {
-                    return (
-                      <tr key={ele.id}>
-                        <td>
-                          <img
-                            src={ele.image}
-                            alt="image"
-                            className={styles.imgPlaceholder}
-                          />
-                        </td>
-                        <td>
-                          <div className={styles.eventName}>{ele.title}</div>
-                          <div className={styles.eventDesc}>
-                            {ele.description}
-                          </div>
-                        </td>
-                        <td>
-                          <span
-                            className={`${styles.badge} ${styles.badgeHackathon}`}
-                          >
-                            {ele.category}
-                          </span>
-                        </td>
-                        <td>
-                          <div className={styles.dateMain}>
-                            {formatDate(ele.eventStartDate)}
-                          </div>
-                          <div className={styles.dateTime}>
-                            {formatDate(ele.eventEndDate)}
-                          </div>
-                        </td>
-                        <td>
-                          <span className={styles.location}>
-                            {ele.Eventlocation}
-                          </span>
-                        </td>
-                        <td>
-                          <span className={styles.attendees}>
-                            {ele.attendeeCount}
-                          </span>
-                        </td>
-                        <td>
-                          <div className={styles.actions}>
-                            <button
-                              className={`${styles.actionBtn} ${styles.actionView}`}
-                              onClick={() => handleEventView(ele.id)}
-                            >
-                              <FaEyeSlash />
-                            </button>
-                            <button
-                              className={`${styles.actionBtn} ${styles.actionEdit}`}
-                              onClick={() => handleEventUpdate(ele.id)}
-                            >
-                              <FaRegEdit />
-                            </button>
-                            <button
-                              className={`${styles.actionBtn} ${styles.actionDelete}`}
-                              onClick={() => handleDeleteEvent(ele.id)}
-                            >
-                              <RiDeleteBinFill />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-               
-              
+              {res.map((ele) => {
+                return (
+                  <tr key={ele.id}>
+                    <td>
+                      <img
+                        src={ele.image}
+                        alt="image"
+                        className={styles.imgPlaceholder}
+                      />
+                    </td>
+                    <td>
+                      <div className={styles.eventName}>{ele.title}</div>
+                      <div className={styles.eventDesc}>{ele.description}</div>
+                    </td>
+                    <td>
+                      <span
+                        className={`${styles.badge} ${styles.badgeHackathon}`}
+                      >
+                        {ele.category}
+                      </span>
+                    </td>
+                    <td>
+                      <div className={styles.dateMain}>
+                        {formatDate(ele.eventStartDate)}
+                      </div>
+                      <div className={styles.dateTime}>
+                        {formatDate(ele.eventEndDate)}
+                      </div>
+                    </td>
+                    <td>
+                      <span className={styles.location}>
+                        {ele.Eventlocation}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={styles.attendees}>
+                        {ele.attendeeCount}
+                      </span>
+                    </td>
+                    <td>
+                      <div className={styles.actions}>
+                        <button
+                          className={`${styles.actionBtn} ${styles.actionView}`}
+                          onClick={() => handleEventView(ele.id)}
+                        >
+                          <FaEyeSlash />
+                        </button>
+                        <button
+                          className={`${styles.actionBtn} ${styles.actionEdit}`}
+                          onClick={() => handleEventUpdate(ele.id)}
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          className={`${styles.actionBtn} ${styles.actionDelete}`}
+                          onClick={() => handleDeleteEvent(ele.id)}
+                        >
+                          <RiDeleteBinFill />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

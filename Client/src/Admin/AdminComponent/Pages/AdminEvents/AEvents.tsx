@@ -40,29 +40,12 @@ export default function AEvents() {
   const res = data?.getEvents || [];
   console.log("the res in admin event is : ", res);
 
-  if (!res.length) {
-    return (
-      <>
-        <div className="loading">
-          <div>
-            <p>No Event found</p>
-            <button
-              style={{ padding: "10px 15px" }}
-              onClick={() => navigate("/admin")}
-            >
-              Back
-            </button>
-          </div>
-        </div>
-      </>
-    );
-  }
   if (loading) {
     return (
       <div className="loadingOverlay">
-        <ClipLoader color="#6c21c8" size={48}/>
+        <ClipLoader color="#6c21c8" size={48} />
       </div>
-    )
+    );
   }
 
   const handleEventUpdate = (idx: string) => {
@@ -145,70 +128,75 @@ export default function AEvents() {
               </tr>
             </thead>
             <tbody>
-              {res.map((ele) => {
-                return (
-                  <tr key={ele.id}>
-                    <td>
-                      <img
-                        src={ele.image}
-                        alt="image"
-                        className={styles.imgPlaceholder}
-                      />
-                    </td>
-                    <td>
-                      <div className={styles.eventName}>{ele.title}</div>
-                      <div className={styles.eventDesc}>{ele.description}</div>
-                    </td>
-                    <td>
-                      <span
-                        className={`${styles.badge} ${styles.badgeHackathon}`}
-                      >
-                        {ele.category}
-                      </span>
-                    </td>
-                    <td>
-                      <div className={styles.dateMain}>
-                        {formatDate(ele.eventStartDate)}
-                      </div>
-                      <div className={styles.dateTime}>
-                        {formatDate(ele.eventEndDate)}
-                      </div>
-                    </td>
-                    <td>
-                      <span className={styles.location}>
-                        {ele.Eventlocation}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={styles.attendees}>
-                        {ele.attendeeCount}
-                      </span>
-                    </td>
-                    <td>
-                      <div className={styles.actions}>
-                        <button
-                          className={`${styles.actionBtn} ${styles.actionView}`}
-                          onClick={() => handleEventView(ele.id)}
-                        >
-                          <FaEyeSlash />
-                        </button>
-                        <button
-                          className={`${styles.actionBtn} ${styles.actionEdit}`}
-                          onClick={() => handleEventUpdate(ele.id)}
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          className={`${styles.actionBtn} ${styles.actionDelete}`}
-                          onClick={() => handleDeleteEvent(ele.id)}
-                        >
-                          <RiDeleteBinFill />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+
+                  {res.map((ele) => {
+                    return (
+                      <tr key={ele.id}>
+                        <td>
+                          <img
+                            src={ele.image}
+                            alt="image"
+                            className={styles.imgPlaceholder}
+                          />
+                        </td>
+                        <td>
+                          <div className={styles.eventName}>{ele.title}</div>
+                          <div className={styles.eventDesc}>
+                            {ele.description}
+                          </div>
+                        </td>
+                        <td>
+                          <span
+                            className={`${styles.badge} ${styles.badgeHackathon}`}
+                          >
+                            {ele.category}
+                          </span>
+                        </td>
+                        <td>
+                          <div className={styles.dateMain}>
+                            {formatDate(ele.eventStartDate)}
+                          </div>
+                          <div className={styles.dateTime}>
+                            {formatDate(ele.eventEndDate)}
+                          </div>
+                        </td>
+                        <td>
+                          <span className={styles.location}>
+                            {ele.Eventlocation}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={styles.attendees}>
+                            {ele.attendeeCount}
+                          </span>
+                        </td>
+                        <td>
+                          <div className={styles.actions}>
+                            <button
+                              className={`${styles.actionBtn} ${styles.actionView}`}
+                              onClick={() => handleEventView(ele.id)}
+                            >
+                              <FaEyeSlash />
+                            </button>
+                            <button
+                              className={`${styles.actionBtn} ${styles.actionEdit}`}
+                              onClick={() => handleEventUpdate(ele.id)}
+                            >
+                              <FaRegEdit />
+                            </button>
+                            <button
+                              className={`${styles.actionBtn} ${styles.actionDelete}`}
+                              onClick={() => handleDeleteEvent(ele.id)}
+                            >
+                              <RiDeleteBinFill />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+               
+              
             </tbody>
           </table>
         </div>

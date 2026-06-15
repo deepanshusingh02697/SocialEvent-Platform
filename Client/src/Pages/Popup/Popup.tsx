@@ -1,5 +1,5 @@
-import {useRef, useState } from "react";
-import {useMutation } from "@apollo/client/react";
+import { useRef, useState } from "react";
+import { useMutation } from "@apollo/client/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useOTPPopup } from "../../Component/Context/PopupContext";
@@ -7,16 +7,20 @@ import { VERIFY_OTP_MUTATION } from "../../Component/graphql/Mutation";
 import type { verifyOtpType } from "../../Component/graphql/client";
 import styles from "./popup.module.css";
 import { GET_CURRENT_USER_QUERY } from "../../Component/graphql/Query";
+import { chatPopupContext } from "../../Component/Context/ChatPopupContext";
 
 export default function Popup() {
   const { isOpen } = useOTPPopup();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
-  const [verifyOTP] = useMutation<verifyOtpType>(VERIFY_OTP_MUTATION,{
-    refetchQueries:[{
-      query:GET_CURRENT_USER_QUERY
-    }]
+  const { closeChatPopup } = chatPopupContext();
+  const [verifyOTP] = useMutation<verifyOtpType>(VERIFY_OTP_MUTATION, {
+    refetchQueries: [
+      {
+        query: GET_CURRENT_USER_QUERY,
+      },
+    ],
   });
 
   if (!isOpen) return null;
@@ -63,28 +67,22 @@ export default function Popup() {
     const res = response?.data?.verifyOTP;
     try {
       if (res?.success) {
-      toast(res?.message, {
-        position: "top-right",
-        type: "success",
-        theme: "colored",
-      });
-      navigate("/");
-    }/*  else {
-      toast("Do login correctly ", {
-        position: "top-right",
-        type: "warning",
-        theme: "colored", 
-      });
-      navigate("/login");
-    } */
+        toast(res?.message, {
+          position: "top-right",
+          type: "success",
+          theme: "colored",
+        });
+        closeChatPopup();
+        navigate("/");
+      }
     } catch (err) {
-      const error = err as Error
+      const error = err as Error;
       toast(error.message, {
         position: "top-right",
         type: "warning",
         theme: "colored",
       });
-      navigate("/login")
+      navigate("/login");
     }
   };
 

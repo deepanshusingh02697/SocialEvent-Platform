@@ -228,9 +228,12 @@
   .card {
   border-radius:12px;
   padding:20px 16px;
-  min-width: 380px;
+  min-width: 350px;
   }
   .map-section{
     min-height: 350px;
+  }
+  .mapSection{
+    padding: 8px;
   }
 }

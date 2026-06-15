@@ -63,3 +63,9 @@
   border: none;
   outline: none;
 }
+@media screen and (max-width:480px) {
+  .popup {
+  border-radius: "20px";
+  width:95vw;
+  }
+}

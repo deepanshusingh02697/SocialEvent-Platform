@@ -103,10 +103,13 @@ export default function AUsers() {
                   </td>
                   <td>
                     <span className={styles.cellText}>
-                      {new Date(Number(ele.createdAt)).toLocaleTimeString(
+                      {new Date(Number(ele.createdAt)).toLocaleString(
                         "en-IN",
                         {
-                          hour: "2-digit",
+                          day:'2-digit',
+                          month:"2-digit",
+                          year:"2-digit",
+                          hour:"2-digit",
                           minute: "2-digit",
                         },
                       )}

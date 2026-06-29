@@ -14,6 +14,8 @@ import {
 import { getTwilioClient, isValidPhone } from "../../lib/twilio";
 import { OAuth2Client } from "google-auth-library";
 import { DateTimeResolver } from "graphql-scalars";
+import sgMail from "@sendgrid/mail";
+sgMail.setApiKey(process.env.TWILIO_SENDGRID_API_KEY!);
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -409,7 +411,7 @@ export const resolvers = {
         throw error;
       }
     },
-    sendOTPLogin: async (
+    /* sendOTPLogin: async (
       _: unknown,
       args: { email: string; password: string; toPhone: string },
       ctx: context,
@@ -459,12 +461,8 @@ export const resolvers = {
             to: args.toPhone,
             channel: "sms",
           });
-        console.log(
-          "status after send OTP to the user : ",
-          verificationRes.status,
-        );
+        console.log("status after send OTP to the user : ", verificationRes);
 
-        //save number in DB
         const Userdata = await prisma.user.update({
           where: { email: user.email },
           data: { phone: args.toPhone },
@@ -472,18 +470,18 @@ export const resolvers = {
 
         console.log("data after update phone ", Userdata);
 
-        setTempToken(ctx.res, Userdata.id); // it is not for authorised the user, just for verifying the otp with same user
+        setTempToken(ctx.res, Userdata.id);
 
         return {
           success: true,
-          otpMsg: "OTP sent successfully",
+          otpMsg: "OTP sent to phone or email",
         };
       } catch (error) {
         console.log("Failed to send OTP : ", error);
         throw new Error("Failed to send OTP : ");
       }
-    },
-    verifyOTP: async (
+    }, */
+    /* verifyOTP: async (
       _parent: unknown,
       args: { code: string },
       ctx: context,
@@ -546,7 +544,173 @@ export const resolvers = {
         console.log("error in verifyOTP : ", error);
         throw error;
       }
+    }, */
+
+    sendOTPLogin: async (
+      _: unknown,
+      args: { email: string; password: string; toPhone: string },
+      ctx: context,
+    ) => {
+      if (!args.email || !args.password || !args.toPhone) {
+        throw new Error("All fields are required");
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { email: args.email.toLowerCase().trim(), role: "USER" },
+      });
+      if (!user) throw new Error("Invalid credential");
+      if (!user.password)
+        throw new Error("For manual login user password must");
+
+      const passwordMatches = await bcrypt.compare(
+        args.password,
+        user.password,
+      );
+      if (!passwordMatches) throw new Error("Invalid credentials");
+
+      const twilioPhoneCheck = isValidPhone(args.toPhone);
+      if (!twilioPhoneCheck) throw new Error("Invalid phone number");
+
+      const twilioVerifyServiceId = process.env.TWILIO_SERVICE_SID;
+      if (!twilioVerifyServiceId)
+        throw new Error("twilioServiceId not configured");
+
+      const twilioClient = getTwilioClient();
+
+      // Purane email OTPs delete karo
+      await prisma.emailOtp.deleteMany({ where: { email: user.email } });
+
+      try {
+        // SMS → Twilio
+        const smsRes = await twilioClient.verify.v2
+          .services(twilioVerifyServiceId)
+          .verifications.create({ to: args.toPhone, channel: "sms" });
+        console.log("SMS sent:", smsRes.status);
+
+        // Email OTP generate
+        const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+        // Purane delete karo
+        await prisma.emailOtp.deleteMany({ where: { email: user.email } });
+
+        // DB mein save karo
+        await prisma.emailOtp.create({
+          data: { email: user.email, otp: emailOtp, expiresAt },
+        });
+        console.log("Email OTP saved in DB:", emailOtp);
+
+        // SendGrid se bhejo
+        const emailRes = await sgMail.send({
+          to: user.email,
+          from: process.env.TWILIO_SENDGRID_FROM_EMAIL!,
+          subject: "Your OTP Code",
+          html: `<h2>Your OTP: <strong>${emailOtp}</strong></h2><p>Valid for 10 minutes.</p>`,
+        });
+        console.log("Email sent via SendGrid:", emailRes);
+        
+        const Userdata = await prisma.user.update({
+          where: { email: user.email },
+          data: { phone: args.toPhone },
+        });
+
+        console.log("data after update phone ", Userdata);
+
+        setTempToken(ctx.res, Userdata.id);
+        
+        return {
+          success: true,
+          otpMsg: "OTP sent to phone or email",
+        };
+      } catch (error) {
+        console.log("Full error:", JSON.stringify(error, null, 2));
+        throw new Error("Failed to send OTP");
+      }
     },
+
+    verifyOTP: async (
+      _parent: unknown,
+      args: { code: string },
+      ctx: context,
+    ) => {
+      try {
+        if (!args.code) throw new Error("OTP required");
+
+        const getTempToken = ctx.req.cookies.tempToken;
+        if (!getTempToken) throw new Error("Session expired - send OTP again");
+
+        const decoded = verifyTempToken(getTempToken);
+        const user = await prisma.user.findUnique({
+          where: { id: decoded.userId },
+        });
+        if (!user) throw new Error("User not found");
+        if (!user.phone)
+          throw new Error("No phone found - please start login again");
+
+        const verifyServiceId = process.env.TWILIO_SERVICE_SID;
+        if (!verifyServiceId)
+          throw new Error("Twilio Verify Service ID not found");
+
+        const twilioClient = getTwilioClient();
+
+        let smsApproved = false;
+        let emailApproved = false;
+
+        // SMS will verify by Twilio
+        try {
+          const smsVerify = await twilioClient.verify.v2
+            .services(verifyServiceId)
+            .verificationChecks.create({ to: user.phone, code: args.code });
+          smsApproved = smsVerify.status === "approved";
+        } catch (err) {
+          console.log("SMS verification failed");
+        }
+
+        // Email will verify via Database
+        try {
+          const otpRecord = await prisma.emailOtp.findFirst({
+            where: {
+              email: user.email,
+              otp: args.code,
+              used: false,
+              expiresAt: { gt: new Date() },
+            },
+            orderBy: { createdAt: "desc" },
+          });
+
+          if (otpRecord) {
+            emailApproved = true;
+            await prisma.emailOtp.update({
+              where: { id: otpRecord.id },
+              data: { used: true },
+            });
+          }
+        } catch (err) {
+          console.log("Email verification failed");
+        }
+
+        if (smsApproved || emailApproved) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              ...(smsApproved && { phoneVerified: true }),
+              ...(emailApproved && { emailVerified: true }),
+            },
+          });
+
+          ctx.res.clearCookie("tempToken", tempCookieOptions);
+          setTokens(ctx.res, user.id, ctx.role);
+
+          return { success: true, otpMsg: "OTP verified - login successfully" };
+        }
+
+        throw new Error("Invalid OTP code - please try again");
+      } catch (error) {
+        console.log("error in verifyOTP:", error);
+        throw error;
+      }
+    },
+
     retreshTokenAPI: async (_parent: unknown, _args: unknown, ctx: context) => {
       const token = ctx.req.cookies?.refreshToken;
       console.log("refresh token is present : ========> ", token);

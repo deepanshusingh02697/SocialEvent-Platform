@@ -24,8 +24,6 @@ export const eventImgUpload = multer({
   },
 });
 
-
-
 const avatarStorage = multer.diskStorage({
     destination:function(req,file,cb){
         cb(null,"./upload/AvatarImage");

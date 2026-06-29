@@ -17,6 +17,7 @@ type User{
 
     phone:String
     phoneVerified:Boolean
+    emailVerified:Boolean
     isActive: Boolean
 
     profile:Profile

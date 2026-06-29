@@ -18,6 +18,7 @@ model User {
   googleId      String?
   phone         String?
   phoneVerified Boolean            @default(false)
+  emailVerified Boolean            @default(false)
   updatedAt     DateTime           @updatedAt
   attendees     EventParticipant[]
   profile       Profile?
@@ -26,6 +27,15 @@ model User {
 
   sentMessages    Message[] @relation("sentMessages")
   receiveMessages Message[] @relation("receiveMessages")
+}
+
+model EmailOtp {
+  id        String   @id @default(cuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model Profile {

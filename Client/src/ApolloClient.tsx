@@ -4,8 +4,8 @@ import { ApolloClient, createHttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4003/graphql",
-  // uri: "https://socialevent-platform-snhu.onrender.com/graphql", 
+  // uri: "http://localhost:4003/graphql",
+  uri: "https://socialevent-platform-snhu.onrender.com/graphql", 
   credentials: "include",
 });
 

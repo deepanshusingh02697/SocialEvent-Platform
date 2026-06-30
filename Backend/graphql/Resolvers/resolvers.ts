@@ -185,13 +185,22 @@ export const resolvers = {
         longitude: number;
         radiusKm: number;
         category?: string;
+        search?: string;
       },
     ) => {
+      console.log(args.search, args.category, args.radiusKm);
+      
       const categoryFilter = args.category
         ? `AND category = '${args.category}'`
         : "";
-      // const searchFilter = args.search ? `AND search = '${args.search}'` : "";
-
+      const searchFilter = args.search
+        ? `AND (
+        title ILIKE '%${args.search}%'
+        OR description ILIKE '%${args.search}%'
+        OR "Eventlocation" ILIKE '%${args.search}%'
+      )`
+        : "";
+      
       const events = await prisma.$queryRawUnsafe<any[]>(`
         SELECT *,
           (point(${args.longitude}, ${args.latitude}) <@> point(longitude, latitude)) AS distance
@@ -202,9 +211,10 @@ export const resolvers = {
           AND longitude IS NOT NULL
           AND (point(${args.longitude}, ${args.latitude}) <@> point(longitude, latitude)) < ${args.radiusKm * 0.621371}
           ${categoryFilter}
+          ${searchFilter}
         ORDER BY distance ASC
       `);
-
+ console.log("Data after filter : ",events);
       return events;
     },
 
@@ -575,32 +585,29 @@ export const resolvers = {
       if (!twilioVerifyServiceId)
         throw new Error("twilioServiceId not configured");
 
-      const twilioClient = getTwilioClient();
+      // const twilioClient = getTwilioClient();
 
-      // Purane email OTPs delete karo
+      // delete old email OTPs
       await prisma.emailOtp.deleteMany({ where: { email: user.email } });
 
       try {
-        // SMS → Twilio
-        const smsRes = await twilioClient.verify.v2
+        // SMS : Twilio
+        /* const smsRes = await twilioClient.verify.v2
           .services(twilioVerifyServiceId)
           .verifications.create({ to: args.toPhone, channel: "sms" });
-        console.log("SMS sent:", smsRes.status);
+        console.log("SMS sent:", smsRes.status); */
 
-        // Email OTP generate
         const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-        // Purane delete karo
         await prisma.emailOtp.deleteMany({ where: { email: user.email } });
 
-        // DB mein save karo
         await prisma.emailOtp.create({
           data: { email: user.email, otp: emailOtp, expiresAt },
         });
         console.log("Email OTP saved in DB:", emailOtp);
 
-        // SendGrid se bhejo
+        // send via SendGrid
         const emailRes = await sgMail.send({
           to: user.email,
           from: process.env.TWILIO_SENDGRID_FROM_EMAIL!,
@@ -608,7 +615,7 @@ export const resolvers = {
           html: `<h2>Your OTP: <strong>${emailOtp}</strong></h2><p>Valid for 10 minutes.</p>`,
         });
         console.log("Email sent via SendGrid:", emailRes);
-        
+
         const Userdata = await prisma.user.update({
           where: { email: user.email },
           data: { phone: args.toPhone },
@@ -617,10 +624,10 @@ export const resolvers = {
         console.log("data after update phone ", Userdata);
 
         setTempToken(ctx.res, Userdata.id);
-        
+
         return {
           success: true,
-          otpMsg: "OTP sent to phone or email",
+          otpMsg: "OTP sent to your email in Spam folder",
         };
       } catch (error) {
         console.log("Full error:", JSON.stringify(error, null, 2));

@@ -38,7 +38,7 @@ export default function HomeEvent() {
     );
   }, []);
 
-  const handleDebounce = useMemo(() => debounce(callbackFunc, 500), []);
+  const handleDebounce = useMemo(() => debounce(callbackFunc, 1000), []);
 
   function callbackFunc(value: string) {
     setIsSearch(value);
@@ -79,6 +79,7 @@ export default function HomeEvent() {
         longitude: userCoords?.lng,
         radiusKm: isDistance,
         category: isCatefory === "All" ? null : isCatefory,
+        search: isSearch ? isSearch:null
       },
     });
 
@@ -139,7 +140,17 @@ export default function HomeEvent() {
 
   const uniqueCategories = [
     "All",
-    ...new Set(res.map((cur: any) => cur.category)),
+    // ...new Set(res.map((cur: any) => cur.category)),
+    "Sports",
+    "AI",
+     "Hackathon",
+    /* "Technology",
+    "Music",
+    "Travel",
+    "Food",
+    "Art",
+    "Gaming",
+    "Business", */
   ];
 
   if (isLoading) {

@@ -10,7 +10,7 @@ import { GET_CURRENT_USER_QUERY } from "../../Component/graphql/Query";
 import { chatPopupContext } from "../../Component/Context/ChatPopupContext";
 
 export default function Popup() {
-  const { isOpen } = useOTPPopup();
+  const { isOpen,closePopup } = useOTPPopup();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
@@ -73,6 +73,7 @@ export default function Popup() {
           theme: "colored",
         });
         closeChatPopup();
+        closePopup();
         navigate("/");
       }
     } catch (err) {

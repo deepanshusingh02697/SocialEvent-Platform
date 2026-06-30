@@ -98,11 +98,13 @@ export const GET_EVENT_DETAILS_QUERY = gql`
   }
 `;
 export const NEARBY_EVENTS_QUERY = gql`
-  query Query($latitude: Float!, $longitude: Float!, $radiusKm: Float!) {
+  query Query($latitude: Float!, $longitude: Float!, $radiusKm: Float!,$category:String,$search:String) {
     nearbyEvents(
       latitude: $latitude
       longitude: $longitude
       radiusKm: $radiusKm
+      category: $category
+      search: $search
     ) {
       id
       Eventlocation

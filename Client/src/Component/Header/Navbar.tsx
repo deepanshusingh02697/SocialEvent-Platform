@@ -11,9 +11,11 @@ import { toast } from "react-toastify";
 import { IoPeopleCircleOutline } from "react-icons/io5";
 import { chatPopupContext } from "../Context/ChatPopupContext";
 import { RiCalendarEventLine } from "react-icons/ri";
+import { useOTPPopup } from "../Context/PopupContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { closePopup } = useOTPPopup();
   const { data } = useQuery<GET_CURRENT_USER_Interface>(GET_CURRENT_USER_QUERY);
   const client = useApolloClient();
   const navigate = useNavigate();
@@ -32,6 +34,7 @@ export default function Navbar() {
     try {
       await logOutUser();
       await client.clearStore();
+      closePopup();
       closeChatPopup();
       navigate("/login");
       toast("Logged out successfully", {

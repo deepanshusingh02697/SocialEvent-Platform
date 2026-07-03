@@ -1,0 +1,38 @@
+name: Deploy SocialEvent Frontend
+
+on:
+  push:
+    branches:
+      - addnewFeature
+    paths:
+      - 'Client/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Client/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: Client
+        run: npm ci
+
+      - name: Build React Application
+        working-directory: Client
+        run: npm run build
+        env:
+          VITE_BACKEND_URL: ${{ secrets.PRODUCTION_BACKEND_URL }}
+          VITE_WS_URL: ${{ secrets.PRODUCTION_WS_URL }}
+          CI: false
+
+      - name: Trigger Render Deployment
+        run: curl -X POST "${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}"

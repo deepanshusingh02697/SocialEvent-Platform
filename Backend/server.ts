@@ -19,7 +19,7 @@ const httpServer = createServer(app);
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      "http://localhost:5173",//add github actions
       "https://socialevent-platform-client.onrender.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],

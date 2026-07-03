@@ -21,7 +21,11 @@ export default function AEvents() {
   const navigate = useNavigate();
   const { setUpdateId } = useEditContext();
 
-  const { data, loading } = useQuery<Get_EVENTS_TYPE>(GET_EVENTS_QUERY, {
+  const {
+    data,
+    loading,
+    refetch: refetchEvents,
+  } = useQuery<Get_EVENTS_TYPE>(GET_EVENTS_QUERY, {
     variables: {
       category: isCatefory === "All" ? "" : isCatefory,
       search: isSearch === "" ? null : isSearch,
@@ -64,6 +68,7 @@ export default function AEvents() {
         eventId: idx,
       },
     });
+    await refetchEvents();
     if (res) {
       toast("Event delete successfully", {
         position: "top-right",

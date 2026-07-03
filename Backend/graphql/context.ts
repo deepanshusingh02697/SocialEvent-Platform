@@ -54,3 +54,32 @@ export const isAdmin = (ctx: context) => {
 export const twoUserRoomId = <T>(senderId: T, receiverId: T) => {
   return [senderId, receiverId].sort().join("-");
 };
+
+export const checkemail = (email: string): string => {
+  const emailRegex =
+    /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+  if (!emailRegex.test(email.trim())) {
+    throw new Error("Please enter a valid email address.");
+  }
+
+  return email.trim().toLowerCase();
+};
+
+export const checkPassword = (password: string): string => {
+  // 8 characters
+  // 1 uppercase letter
+  // 1 lowercase letter
+  // 1 number
+  // 1 special character
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#()_\-+=])[A-Za-z\d@$!%*?&^#()_\-+=]{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    throw new Error(
+      "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character."
+    );
+  }
+
+  return password;
+};

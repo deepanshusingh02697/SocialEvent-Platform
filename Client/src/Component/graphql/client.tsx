@@ -28,9 +28,33 @@ export interface GET_CURRENT_USER_Interface {
       {
         userId: number;
         interestId: number;
+        interest: {
+          name: string;
+        };
       },
     ];
   };
+}
+export interface Get_PersonalisedEvent_Interface {
+  getPersonalisedEvents: [
+    {
+      id: string;
+      title: string;
+      description: string;
+      category: string;
+      Eventlocation: string;
+      latitude: number;
+      longitude: number;
+      eventStartDate: string;
+      eventEndDate: string;
+      image: string;
+      attendeeCount: number;
+      isArchive: boolean;
+      distance: number;
+      createdAt: string;
+      updatedAt: string;
+    },
+  ];
 }
 export interface SignupResponseData {
   signUp: {

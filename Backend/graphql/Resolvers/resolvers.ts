@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
-import { context, isAdmin, isAuth, twoUserRoomId } from "../context";
+import { checkemail, checkPassword, context, isAdmin, isAuth, twoUserRoomId } from "../context";
 import {
   accessCookieOptions,
   refreshCookieOptions,
@@ -189,7 +189,7 @@ export const resolvers = {
       },
     ) => {
       console.log(args.search, args.category, args.radiusKm);
-      
+
       const categoryFilter = args.category
         ? `AND category = '${args.category}'`
         : "";
@@ -200,7 +200,7 @@ export const resolvers = {
         OR "Eventlocation" ILIKE '%${args.search}%'
       )`
         : "";
-      
+
       const events = await prisma.$queryRawUnsafe<any[]>(`
         SELECT *,
           (point(${args.longitude}, ${args.latitude}) <@> point(longitude, latitude)) AS distance
@@ -214,7 +214,30 @@ export const resolvers = {
           ${searchFilter}
         ORDER BY distance ASC
       `);
- console.log("Data after filter : ",events);
+      console.log("Data after filter : ", events);
+      return events;
+    },
+
+    getPersonalisedEvents: async (
+      _: unknown,
+      args: { category: string[]; eventDetailId: String },
+      ctx: context,
+    ) => {
+      isAuth(ctx);
+
+      console.log(args.category, args.eventDetailId);
+
+      const events = await prisma.event.findMany({
+        where: {
+          category: {
+            in: args.category,
+          },
+          NOT: {
+            id: Number(args.eventDetailId),
+          },
+        },
+      });
+
       return events;
     },
 
@@ -301,14 +324,17 @@ export const resolvers = {
           throw new Error(
             "Account wiht this email already Exist - please logIn",
           );
+        const checkEmail=checkemail(args.email)
 
-        const hashPassword = await bcrypt.hash(args.password, 10);
+        const checkpassword=checkPassword(args.password)
+
+        const hashPassword = await bcrypt.hash(checkpassword, 10);
 
         const user = await prisma.user.create({
           data: {
             firstname: args.firstname,
             lastname: args.lastname,
-            email: args.email,
+            email: checkEmail,
             password: hashPassword,
           },
           include: {
@@ -911,7 +937,7 @@ export const resolvers = {
         }
       }
 
-      return await prisma.event.create({
+      const event = await prisma.event.create({
         data: {
           title: args.title,
           description: args.description,
@@ -925,6 +951,16 @@ export const resolvers = {
         },
         include: { participants: true },
       });
+
+      ctx.io.emit("receive_notification", {
+        type: "NEW_EVENT",
+        title: event.title,
+        message: `A new event "${event.title}" has been created.`,
+        eventId: event.id,
+        createdAt: new Date(),
+      });
+
+      return event;
     },
     updateEvent: async (
       _: unknown,

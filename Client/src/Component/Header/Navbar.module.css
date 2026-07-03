@@ -31,6 +31,13 @@
   position: relative;
   cursor: pointer;
 }
+
+.rightCorner{
+  display: flex;
+  gap: 22px;
+  justify-content: center;
+  align-items: center;
+}
 .profilefilter {
   position: absolute;
   z-index: 12;
@@ -51,11 +58,10 @@
 }
 
 .profileBlock {
-  font-size: 14px;
   padding: 8px 25px;
   display: flex;
   gap: 10px;
-  font-size: 20px;
+  font-size: 16px;
 }
 .profileBlock:hover {
   background-color: #6e97f6;

@@ -158,6 +158,8 @@ export const CreateEvent_Mutation = gql`
     $eventlocation: String!
     $eventStartDate: String!
     $eventEndDate: String!
+    $latitude: Float
+    $longitude: Float
     $image: String
   ) {
     createEvent(
@@ -167,6 +169,8 @@ export const CreateEvent_Mutation = gql`
       Eventlocation: $eventlocation
       eventStartDate: $eventStartDate
       eventEndDate: $eventEndDate
+      latitude:$latitude
+      longitude:$longitude
       image: $image
     ) {
       id

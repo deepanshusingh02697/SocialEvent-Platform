@@ -12,6 +12,7 @@ import { IoPeopleCircleOutline } from "react-icons/io5";
 import { chatPopupContext } from "../Context/ChatPopupContext";
 import { RiCalendarEventLine } from "react-icons/ri";
 import { useOTPPopup } from "../Context/PopupContext";
+import Notifitcation from "../Notification/Notifitcation";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,28 +69,32 @@ export default function Navbar() {
             <RiCalendarEventLine /> EventHub
           </NavLink>
 
-          {res?.avatar ? (
-            <img
-              src={res?.avatar}
-              alt="avatar"
-              style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "50%",
-                objectFit: "cover",
-                padding: "0px",
-                border: "1px solid gray",
-              }}
-              onClick={() => setIsOpen(!isOpen)}
-            />
-          ) : (
-            <div
-              className={styles.profilelogo}
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {res?.firstname.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <div className={styles.rightCorner}>
+            <Notifitcation/>
+
+            {res?.avatar ? (
+              <img
+                src={res?.avatar}
+                alt="avatar"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  padding: "0px",
+                  border: "1px solid gray",
+                }}
+                onClick={() => setIsOpen(!isOpen)}
+              />
+            ) : (
+              <div
+                className={styles.profilelogo}
+                onClick={() => setIsOpen(!isOpen)}
+              >
+                {res?.firstname.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
 
           {isOpen && (
             <div className={styles.profilefilter}>

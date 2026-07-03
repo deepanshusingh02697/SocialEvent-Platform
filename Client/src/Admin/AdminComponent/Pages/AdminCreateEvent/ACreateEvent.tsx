@@ -167,6 +167,9 @@ export default function ACreateEvent() {
       }
     }
 
+    console.log();
+    
+
     try {
       if (res && editId !== null) {
         const result = await updateEventMutation({

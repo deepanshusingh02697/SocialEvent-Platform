@@ -4,7 +4,6 @@ import {
   FaUsers,
   FaArrowLeft,
 } from "react-icons/fa";
-// import { MdLocationOn } from "react-icons/md";
 import styles from "./eventDetail.module.css";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
@@ -17,7 +16,7 @@ import type {
   GET_USER_JOIN_Interface,
   Post_Join_Event_Interface,
 } from "../../Component/graphql/client";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { formatDate } from "../../Component/Context/conversion";
 
 import {
@@ -33,6 +32,9 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { ClipLoader } from "react-spinners";
+import { useEffect, useState } from "react";
+import QrModal from "../../Component/QR-Modal/QrModals";
+import SuggestionEvents from "../../Component/SuggestionEvents/SuggestionEvents";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -44,6 +46,10 @@ L.Icon.Default.mergeOptions({
 export default function EventDetails() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showQrModal, setShowQrModal] = useState(false);
+
   const { data, loading } = useQuery<GET_Event_Detail_Interface>(
     GET_EVENT_DETAILS_QUERY,
     {
@@ -73,21 +79,17 @@ export default function EventDetails() {
     useQuery<GET_USER_JOIN_Interface>(GET_USER_JOIN_QUERY);
 
   const joinedEvensRes = checkJoinEvent?.userJoinedEvents;
-  if (!joinedEvensRes) return;
   const isjoin = joinedEvensRes?.some((ele) => ele.id === eventId) ?? false;
 
-  if (loading) {
-    return (
-      <div className="loadingOverlay">
-        <ClipLoader color="#6c21c8" size={48} />
-      </div>
-    );
-  }
-
-  const eventDetailData = data?.getEvent;
-  if (!eventDetailData) {
-    return;
-  }
+  //Scan QR
+  useEffect(() => {
+    const shouldAutoJoin = searchParams.get("autojoin") === "true";
+    if (shouldAutoJoin && !loading && joinedEvensRes && !isjoin) {
+      handleJoinEvent();
+      searchParams.delete("autojoin");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, isjoin, loading, joinedEvensRes]);
 
   const handleJoinEvent = async () => {
     try {
@@ -113,6 +115,7 @@ export default function EventDetails() {
       }
     }
   };
+
   const handleLeaveEvent = async () => {
     try {
       await leaveEvent({
@@ -137,11 +140,30 @@ export default function EventDetails() {
     }
   };
 
+  const handleQRCode = () => {
+    setShowQrModal(true);
+  };
+
+  if (!joinedEvensRes) return null;
+
+  if (loading) {
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
+    );
+  }
+
+  const eventDetailData = data?.getEvent;
+  if (!eventDetailData) {
+    return null;
+  }
+
   return (
     <>
       <div className="bodyCon">
         <div className={`container ${styles.eventDetailCon}`}>
-          <button className={styles.back} onClick={() => navigate(-1)}>
+          <button className={styles.back} onClick={() => navigate("/")}>
             <FaArrowLeft /> Back to Events
           </button>
           <div className={styles.wrapper}>
@@ -156,15 +178,20 @@ export default function EventDetails() {
               <span className={styles.category}>
                 {eventDetailData?.category}
               </span>
-              {isjoin ? (
-                <button className={styles.joinBtn} onClick={handleLeaveEvent}>
-                  Leave Event
+              <div style={{ display: "flex", gap: "20px" }}>
+                <button className={styles.joinBtn} onClick={handleQRCode}>
+                  Scan QR
                 </button>
-              ) : (
-                <button className={styles.joinBtn} onClick={handleJoinEvent}>
-                  Join Event
-                </button>
-              )}
+                {isjoin ? (
+                  <button className={styles.joinBtn} onClick={handleLeaveEvent}>
+                    Leave Event
+                  </button>
+                ) : (
+                  <button className={styles.joinBtn} onClick={handleJoinEvent}>
+                    Join Event
+                  </button>
+                )}
+              </div>
             </div>
 
             <h1 className={styles.title}>{eventDetailData?.title}</h1>
@@ -197,7 +224,7 @@ export default function EventDetails() {
                       {eventDetailData?.Eventlocation}
                     </p>
                     <p className={styles.detailSub}>
-                      {eventDetailData?.distance} km away
+                      {eventDetailData.distance? `${eventDetailData?.distance.toFixed(2)} km away` :""}
                     </p>
                   </div>
                 </div>
@@ -213,11 +240,6 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              {/* <div className={styles.mapBox}>
-                <MdLocationOn className="detailIcon" />
-                <p className={styles.mapLabel}>Map View</p>
-                <p className={styles.mapCoords}>Lat: 40.7829, Lng: -73.9654</p>
-              </div> */}
               <MapContainer
                 center={[eventDetailData.latitude, eventDetailData.longitude]}
                 zoom={14}
@@ -246,8 +268,17 @@ export default function EventDetails() {
               <p className={styles.aboutText}>{eventDetailData?.description}</p>
             </div>
           </div>
+          <SuggestionEvents eventDetailCategory={eventDetailData?.category} id={eventDetailData?.id}/>
         </div>
       </div>
+
+      {showQrModal && (
+        <QrModal
+          eventId={Number(eventId)}
+          onClose={() => setShowQrModal(false)}
+          isjoin={isjoin}
+        />
+      )}
     </>
   );
 }

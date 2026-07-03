@@ -29,12 +29,11 @@ app.use(
   }),
 );
 
-//frontend as well
 const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:5173",
-      "https://socialevent-platform-client.onrender.com", //For Production
+      "https://socialevent-platform-client.onrender.com",
     ],
     methods: ["GET", "POST"],
     credentials: true,
@@ -59,7 +58,6 @@ io.on("connect", (socket) => {
 
 app.use("/upload", uploadRouter);
 
-//Apollo sever
 const server = new ApolloServer<context>({
   typeDefs,
   resolvers,

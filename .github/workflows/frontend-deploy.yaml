@@ -27,11 +27,13 @@ jobs:
 
     - name: Install Dependencies
       working-directory: Client
-      run: npm ci
+      run: |
+        npm install
+        npm install -D esbuild
 
     - name: Build Web Production Assets
       working-directory: Client
-      run: npm run build
+      run: npx vite build
       env:
         VITE_BACKEND_URL: ${{ secrets.PRODUCTION_BACKEND_URL }}
         VITE_WS_URL: ${{ secrets.PRODUCTION_WS_URL }}

@@ -69,8 +69,6 @@ export default function HomeEvent() {
     },
   });
 
-  console.log("data for distance after query ; ", data);
-
   const { data: nearbyData, loading: nearbyLoading } =
     useQuery<NEARBY_EVENT_Interface>(NEARBY_EVENTS_QUERY, {
       skip: !isNearbyMode || !userCoords,

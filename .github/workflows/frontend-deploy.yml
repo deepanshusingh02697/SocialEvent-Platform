@@ -3,7 +3,7 @@ name: Deploy SocialEvent Frontend
 on:
   push:
     branches:
-      - addnewFeature
+      - addNewFeature
     paths:
       - 'Client/**'
 

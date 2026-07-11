@@ -93,17 +93,7 @@ export default function EventDetails() {
   const joinedEvensRes = checkJoinEvent?.userJoinedEvents;
   const isjoin = joinedEvensRes?.some((ele) => ele.id === eventId) ?? false;
 
-  //Scan QR
-  useEffect(() => {
-    const shouldAutoJoin = searchParams.get("autojoin") === "true";
-    if (shouldAutoJoin && !loading && joinedEvensRes && !isjoin) {
-      handleJoinEvent();
-      searchParams.delete("autojoin");
-      setSearchParams(searchParams, { replace: true });
-    }
-  }, [searchParams, isjoin, loading, joinedEvensRes]);
-
-  const handleJoinEvent = async () => {
+    const handleJoinEvent = async () => {
     try {
       const res = await JoinEventMutaion({
         variables: {
@@ -127,6 +117,17 @@ export default function EventDetails() {
       }
     }
   };
+  //Scan QR
+  useEffect(() => {
+    const shouldAutoJoin = searchParams.get("autojoin") === "true";
+    if (shouldAutoJoin && !loading && joinedEvensRes && !isjoin) {
+      handleJoinEvent();
+      searchParams.delete("autojoin");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, isjoin, loading, joinedEvensRes]);
+
+
 
   const handleLeaveEvent = async () => {
     try {

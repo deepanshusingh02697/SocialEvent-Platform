@@ -60,7 +60,6 @@ const errorLink = onError(
             });
           })
           .catch((err: any) => {
-            const error = err as Error;
             isRefreshing = false;
             window.location.href = "/register";
             observer.error(err);

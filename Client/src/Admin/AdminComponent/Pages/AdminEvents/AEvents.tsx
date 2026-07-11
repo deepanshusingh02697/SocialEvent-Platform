@@ -42,7 +42,6 @@ export default function AEvents() {
   useEffect(() => {}, [data]);
 
   const res = data?.getEvents || [];
-  console.log("the res in admin event is : ", res);
 
   if (loading) {
     return (

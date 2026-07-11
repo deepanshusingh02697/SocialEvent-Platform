@@ -46,16 +46,13 @@ export default function JoinEvent() {
 
   const res = data?.userJoinedEvents;
   if (!res) {
-    console.log("res is : ", res);
     return;
   }
   const popupAttendies = chatAttendies?.eventParticipants;
   if (!popupAttendies) {
-    console.log("res is : ", res);
     return;
   }
 
-  console.log("joined event by user ", res);
 
      if (loading) {
     return (

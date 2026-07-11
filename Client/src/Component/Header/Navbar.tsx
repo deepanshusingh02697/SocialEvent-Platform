@@ -1,7 +1,7 @@
 import styles from "./Navbar.module.css";
 import { MdOutlineSettings } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApolloClient, useMutation, useQuery } from "@apollo/client/react";
 import type { GET_CURRENT_USER_Interface } from "../graphql/client";
 import { GET_CURRENT_USER_QUERY } from "../graphql/Query";
@@ -17,6 +17,7 @@ import Notifitcation from "../Notification/Notifitcation";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { closePopup } = useOTPPopup();
+  const profileRef = useRef<HTMLDivElement>(null);
   const { data } = useQuery<GET_CURRENT_USER_Interface>(GET_CURRENT_USER_QUERY);
   const client = useApolloClient();
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function Navbar() {
 
   const res = data?.currentUser;
 
-  const [logOutUser] = useMutation<Boolean>(POST_LOGOUT_MUTATION, {
+  const [logOutUser] = useMutation<boolean>(POST_LOGOUT_MUTATION, {
     refetchQueries: [
       {
         query: GET_CURRENT_USER_QUERY,
@@ -46,7 +47,7 @@ export default function Navbar() {
     } catch (error: any) {
       console.error("Logout failed : ", error);
       if (error.name === "AbortError" || error.message?.includes("aborted")) {
-        console.log("Logout redirect cleanup aborted safely.");
+        console.error("Logout redirect cleanup aborted safely.");
       } else {
         console.error("Logout failed : ", error);
       }
@@ -61,6 +62,20 @@ export default function Navbar() {
     navigate("/joinedevent");
     setIsOpen(false);
   };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <div className={styles.bodyCon}>
       <div className={styles.container}>
@@ -69,21 +84,13 @@ export default function Navbar() {
             <RiCalendarEventLine /> EventHub
           </NavLink>
 
-          <div className={styles.rightCorner}>
-            <Notifitcation/>
+          <div className={styles.rightCorner} ref={profileRef}>
+            <Notifitcation />
 
             {res?.avatar ? (
               <img
                 src={res?.avatar}
                 alt="avatar"
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  padding: "0px",
-                  border: "1px solid gray",
-                }}
                 onClick={() => setIsOpen(!isOpen)}
               />
             ) : (
@@ -94,9 +101,8 @@ export default function Navbar() {
                 {res?.firstname.charAt(0).toUpperCase()}
               </div>
             )}
-          </div>
 
-          {isOpen && (
+             {isOpen && (
             <div className={styles.profilefilter}>
               <div
                 className={styles.profileBlock}
@@ -122,6 +128,9 @@ export default function Navbar() {
               )}
             </div>
           )}
+          </div>
+
+         
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoMdNotifications } from "react-icons/io";
 import { socket } from "../../socket";
 import styles from "./noitification.module.css";
@@ -14,12 +14,11 @@ interface Notification {
 export default function Notification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement | null>(null);
   const client = useApolloClient();
 
   useEffect(() => {
-    // socket.on("receive_notification", (data: Notification) => {
-    //   setNotifications((prev) => [data, ...prev]);
-    // });
+
     const handler = (notification: Notification) => {
       setNotifications((prev) => [notification, ...prev]);
 
@@ -33,11 +32,26 @@ export default function Notification() {
       socket.off("receive_notification");
     };
   }, [notifications]);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className={styles.notificationWrapper}>
       <div
         className={styles.notifiCon}
+        ref={profileRef}
         onClick={() => setOpen((prev) => !prev)}
       >
         <IoMdNotifications className={styles.bell} />
@@ -52,7 +66,7 @@ export default function Notification() {
           {/* <h4 style={{textDecoration:"underline",width:"100%",textAlign:"center",marginBottom:"15px"}}>Notifications</h4> */}
 
           {notifications.length === 0 ? (
-            <p>No notifications</p>
+            <p>No notifications yet</p>
           ) : (
             notifications.map((item, index) => (
               <div key={index} className={styles.notificationItem}>

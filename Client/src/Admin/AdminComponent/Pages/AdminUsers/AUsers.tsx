@@ -27,7 +27,6 @@ export default function AUsers() {
   }
 
   const res = data?.adminGetUsers || [];
-  console.log("the res in admin Users is : ", res);
 
   function debounce(fn: any, delay: number) {
     let timerId: ReturnType<typeof setTimeout> | undefined;

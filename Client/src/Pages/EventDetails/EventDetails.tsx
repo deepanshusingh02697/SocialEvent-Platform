@@ -7,6 +7,7 @@ import {
 import styles from "./eventDetail.module.css";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
+  GET_ATTENDITES_ChatPopup,
   GET_EVENT_DETAILS_QUERY,
   GET_EVENTS_QUERY,
   GET_USER_JOIN_QUERY,
@@ -35,6 +36,8 @@ import { ClipLoader } from "react-spinners";
 import { useEffect, useState } from "react";
 import QrModal from "../../Component/QR-Modal/QrModals";
 import SuggestionEvents from "../../Component/SuggestionEvents/SuggestionEvents";
+import ChatPopup from "../../Component/ChatPopup/ChatPopup";
+import { chatPopupContext } from "../../Component/Context/ChatPopupContext";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -49,6 +52,9 @@ export default function EventDetails() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [showQrModal, setShowQrModal] = useState(false);
+
+  const { setIsOpenChat } = chatPopupContext();
+  const [selectedEventId, setSelectedEventId] = useState("");
 
   const { data, loading } = useQuery<GET_Event_Detail_Interface>(
     GET_EVENT_DETAILS_QUERY,
@@ -78,6 +84,12 @@ export default function EventDetails() {
   const { data: checkJoinEvent } =
     useQuery<GET_USER_JOIN_Interface>(GET_USER_JOIN_QUERY);
 
+  const { data: chatAttendies } = useQuery<any>(GET_ATTENDITES_ChatPopup, {
+    variables: {
+      eventId: selectedEventId,
+    },
+    skip: !selectedEventId,
+  });
   const joinedEvensRes = checkJoinEvent?.userJoinedEvents;
   const isjoin = joinedEvensRes?.some((ele) => ele.id === eventId) ?? false;
 
@@ -153,6 +165,10 @@ export default function EventDetails() {
       </div>
     );
   }
+  const openChatPopup = () => {
+    setSelectedEventId(String(eventId));
+    setIsOpenChat(true);
+  };
 
   const eventDetailData = data?.getEvent;
   if (!eventDetailData) {
@@ -224,7 +240,9 @@ export default function EventDetails() {
                       {eventDetailData?.Eventlocation}
                     </p>
                     <p className={styles.detailSub}>
-                      {eventDetailData.distance? `${eventDetailData?.distance.toFixed(2)} km away` :""}
+                      {eventDetailData.distance
+                        ? `${eventDetailData?.distance.toFixed(2)} km away`
+                        : ""}
                     </p>
                   </div>
                 </div>
@@ -233,8 +251,18 @@ export default function EventDetails() {
                   <FaUsers className="detailIcon" />
                   <div>
                     <p className={styles.detailLabel}>Attendees</p>
-                    <p className={styles.detailValue}>
+                    {/* <p className={styles.detailValue}>
                       {eventDetailData?.attendeeCount} people attending
+                    </p> */}
+                    <p
+                      className={styles.detailValue}
+                      style={{ cursor: "pointer", color: "#3b82f6" }}
+                      onClick={openChatPopup}
+                    >
+                      {isjoin
+                        ? eventDetailData?.attendeeCount - 1
+                        : eventDetailData?.attendeeCount}{" "}
+                      people attending
                     </p>
                   </div>
                 </div>
@@ -242,7 +270,7 @@ export default function EventDetails() {
 
               <MapContainer
                 center={[eventDetailData.latitude, eventDetailData.longitude]}
-                zoom={14}
+                zoom={10}
                 style={{ width: "100%", height: "100%", borderRadius: "12px" }}
                 scrollWheelZoom={false}
               >
@@ -268,7 +296,10 @@ export default function EventDetails() {
               <p className={styles.aboutText}>{eventDetailData?.description}</p>
             </div>
           </div>
-          <SuggestionEvents eventDetailCategory={eventDetailData?.category} id={eventDetailData?.id}/>
+          <SuggestionEvents
+            eventDetailCategory={eventDetailData?.category}
+            id={eventDetailData?.id}
+          />
         </div>
       </div>
 
@@ -279,6 +310,10 @@ export default function EventDetails() {
           isjoin={isjoin}
         />
       )}
+      <ChatPopup
+        userJoinedEvents={joinedEvensRes}
+        eventParticipants={chatAttendies?.eventParticipants ?? []}
+      />
     </>
   );
 }

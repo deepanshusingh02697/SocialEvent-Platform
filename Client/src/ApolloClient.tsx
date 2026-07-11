@@ -4,8 +4,8 @@ import { ApolloClient, createHttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
-  // uri: "http://localhost:4003/graphql",
-  uri: "https://socialevent-platform-snhu.onrender.com/graphql", 
+  uri: "http://localhost:4003/graphql",
+  // uri: "https://socialevent-platform-snhu.onrender.com/graphql", 
   credentials: "include",
 });
 
@@ -26,8 +26,6 @@ const refreshAccessToken = async (): Promise<boolean> => {
 };
 
 let isRefreshing = false;
-console.log("isRefreshing : ",isRefreshing );
-
 
 const errorLink = onError(
   ({
@@ -35,12 +33,7 @@ const errorLink = onError(
     networkError,
     operation,
     forward,
-    CombinedGraphQLErrors,
   }: any) => {
-    console.log("ERROR LINK HIT");
-    console.log("graphQLErrors:", graphQLErrors);
-    console.log("networkError:", networkError);
-    console.log("CombinedGraphQLErrors: ", CombinedGraphQLErrors);
 
     const isNetwork401 =
       networkError &&
@@ -60,7 +53,6 @@ const errorLink = onError(
         refreshAccessToken()
           .then(() => {
             isRefreshing = false;
-            console.log("Token refreshed, retrying operation...");
             forward(operation).subscribe({
               next: observer.next.bind(observer),
               error: observer.error.bind(observer),
@@ -69,9 +61,7 @@ const errorLink = onError(
           })
           .catch((err: any) => {
             const error = err as Error;
-            console.log("error in refresh apollo client is : ", error);
             isRefreshing = false;
-            console.log("Refresh failed, redirecting...");
             window.location.href = "/register";
             observer.error(err);
           });

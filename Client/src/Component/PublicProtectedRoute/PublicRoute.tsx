@@ -9,7 +9,6 @@ interface Props {
 }
 export default function PublicRoute({ children }: Props) {
   const { data, loading } = useQuery<GET_CURRENT_USER_Interface>(GET_CURRENT_USER_QUERY);
-  console.log("data from backend is : ", data);
 
   if (loading) {
     return (

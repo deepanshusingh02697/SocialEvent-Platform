@@ -12,14 +12,10 @@ export default function GoogleAuth() {
   );
 
   const GoogleLoginFunc = async (CredentialResponse: any) => {
-    console.log(CredentialResponse);
-    /*  const decode = jwtDecode(CredentialResponse.credential);
-      console.log(decode); */
     try {
       const response = await googleLoginMutation({
         variables: { idToken: CredentialResponse.credential },
       });
-      console.log("Google response is : ",response.data);
       if (response) {
         toast("Login with Google Successfully", {
           position: "top-right",
@@ -30,14 +26,14 @@ export default function GoogleAuth() {
         navigate("/");
       }
     } catch (error) {
-      console.log("error in GoogleLogin : ", error);
+      console.error("error in GoogleLogin : ", error);
     }
   };
   return (
     <GoogleLogin
       onSuccess={(credentialResponse) => GoogleLoginFunc(credentialResponse)}
       onError={() => {
-        console.log("Login Failed");
+        console.error("Login Failed");
       }}
       useOneTap
     />

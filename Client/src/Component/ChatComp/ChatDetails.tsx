@@ -3,7 +3,7 @@ import styles from "./chat.module.css";
 import { IoSend } from "react-icons/io5";
 import { socket } from "../../socket";
 import { useMutation, useQuery } from "@apollo/client/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Get_Message_Query } from "../graphql/Query";
 import { Message_MUTATION } from "../graphql/Mutation";
@@ -22,6 +22,7 @@ export default function ChatDetails() {
   const { authUserData } = useAuth();
   const navigate = useNavigate();
   const { closeChatPopup } = chatPopupContext();
+  const location = useLocation();
 
   const { data, loading, refetch } = useQuery<Get_Message_Interface>(
     Get_Message_Query,
@@ -31,7 +32,6 @@ export default function ChatDetails() {
     },
   );
 
-  console.log("data from getMessage: ", data?.getMessages);
 
   const currentUserId = authUserData?.id;
 
@@ -42,10 +42,10 @@ export default function ChatDetails() {
 
   useEffect(() => {
     socket.on("connect", () => {
-      console.log("socket : ", socket.id);
+      console.error("socket : ", socket.id);
     });
     socket.on("newRoomMessage", (newMessage) => {
-      console.log("received : ", newMessage);
+      console.error("received : ", newMessage);
       handleNewMessage();
       setTextinput("");
     });
@@ -59,7 +59,7 @@ export default function ChatDetails() {
   useEffect(() => {
     if (currentUserId) {
       const roomId = [currentUserId, chatId].sort().join("-");
-      console.log("room id:", roomId);
+      console.error("room id:", roomId);
       socket.emit("joinRoom", roomId);
     }
   }, []);
@@ -74,26 +74,30 @@ export default function ChatDetails() {
   const handleSendMessage = async () => {
     if (!textinput.trim()) return;
     try {
-      const response = await sendMessage({
+      await sendMessage({
         variables: { content: textinput, receiverId: Number(chatId) },
       });
-      console.log("response after sent message:", response);
       setTextinput("");
     } catch (err) {
+      console.error(err)
       toast("Something went wrong!", {
         position: "top-right",
         type: "warning",
       });
+      
     }
   };
   const handlebackBtn = () => {
     closeChatPopup();
     navigate(-1);
-  }
+  };
 
   const receiverName =
-    data?.getMessages.find((m) => m.receiverId !== Number(currentUserId))
-      ?.receiver?.firstname ?? "User";
+    location.state?.firstname ??
+    data?.getMessages.find(
+      (m) => Number(m.receiverId) !== Number(currentUserId),
+    )?.receiver?.firstname ??
+    "User";
 
   return (
     <>
@@ -110,7 +114,7 @@ export default function ChatDetails() {
                 </div>
                 <div>
                   <div className={styles.chatUsername}>{receiverName}</div>
-                  <div className={styles.chatUserStatus}>offline</div>
+                  {/* <div className={styles.chatUserStatus}>offline</div> */}
                 </div>
               </div>
 
@@ -133,10 +137,13 @@ export default function ChatDetails() {
                       >
                         {msg.content}
                         <div className={styles.messageTime}>
-                          {new Date(Number(msg.createdAt)).toLocaleTimeString("en-IN", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {new Date(Number(msg.createdAt)).toLocaleTimeString(
+                            "en-IN",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
                         </div>
                       </div>
                     </div>

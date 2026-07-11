@@ -35,7 +35,7 @@ export default function SuggestionEvents({ eventDetailCategory, id }: Props) {
     if (!scrollRef.current) return;
 
     scrollRef.current.scrollBy({
-      left: direction === "left" ? -250 : 250,
+      left: direction === "left" ? -305 : 305,
       behavior: "smooth",
     });
   };

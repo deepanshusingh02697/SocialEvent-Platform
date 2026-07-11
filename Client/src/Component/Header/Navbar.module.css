@@ -32,7 +32,7 @@
   cursor: pointer;
 }
 
-.rightCorner{
+.rightCorner {
   display: flex;
   gap: 22px;
   justify-content: center;
@@ -42,7 +42,7 @@
   position: absolute;
   z-index: 12;
   right: 15vw;
-  top:77px;
+  top: 77px;
   box-shadow:
     rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
@@ -68,11 +68,24 @@
   color: aliceblue;
   cursor: pointer;
 }
+.rightCorner img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  padding: 0;
+  border: 1px solid gray;
+}
 
 @media screen and (max-width: 668px) {
   .profilefilter {
     right: 15vw;
     top: 90px;
+  }
+  .rightCorner img {
+    padding: 6px 10px;
+    width: 45px;
+    height: 45px;
   }
 }
 @media screen and (max-width: 480px) {
@@ -80,7 +93,7 @@
     width: 90vw;
   }
   .profilefilter {
-    top:67px;
+    top: 67px;
     right: 3vw;
   }
   .profileBlock {
@@ -89,5 +102,11 @@
   }
   .con {
     padding: 15px 0px;
+  }
+  .logo {
+    font-size: 20px;
+  }
+  .profilelogo {
+    padding: 6px 10px;
   }
 }

@@ -13,7 +13,7 @@
   gap: 18px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  scrollbar-width: none;    
+  scrollbar-width: none;
 }
 
 .suggesblock {
@@ -108,7 +108,15 @@
     right: 0px;
   }
   .arrow {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+  }
+
+  .suggesblock {
+    flex: 0 0 285px;
+  }
+  .suggesCon {
+    padding: 0px 15px;
   }
 }

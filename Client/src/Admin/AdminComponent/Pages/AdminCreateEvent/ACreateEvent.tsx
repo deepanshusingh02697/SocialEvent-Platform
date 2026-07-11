@@ -78,7 +78,7 @@ export default function ACreateEvent() {
         data?.address?.town ??
         `${lat}, ${lng}`;
       setLocationName(name);
-      console.log("the location name become : ",locationName);
+      console.warn("the location name become : ",locationName);
       
       setFormInput((prev) => ({ ...prev, location: name }));
     } catch (err) {
@@ -166,8 +166,6 @@ export default function ACreateEvent() {
         return;
       }
     }
-
-    console.log();
     
 
     try {

@@ -52,45 +52,6 @@ export const resolvers = {
       return prisma.interest.findMany({ orderBy: { name: "asc" } });
     },
 
-    /*   getEvents: async (
-      _: unknown,
-      args: {
-        category?: string;
-        search?: string;
-        fromDate?: string;
-        toDate?: string;
-      },
-      ctx: context,
-    ) => {
-      return await prisma.event.findMany({
-        where: {
-          isArchive: false,
-          ...(args.category && { category: args.category }),
-
-          ...(args.search && {
-            OR: [
-              { title: { contains: args.search, mode: "insensitive" } },
-              { description: { contains: args.search, mode: "insensitive" } },
-              { Eventlocation: { contains: args.search, mode: "insensitive" } },
-            ],
-          }),
-
-          ...(args.fromDate && {
-            eventStartDate: { gte: new Date(args.fromDate) },
-          }),
-          ...(args.toDate && {
-            eventEndDate: { lte: new Date(args.toDate) },
-          }),
-        },
-        include: {
-          participants: {
-            include: { user: true },
-          },
-        },
-        orderBy: { eventStartDate: "asc" },
-      });
-    }, */
-
     getEvents: async (
       _: unknown,
       args: {
@@ -447,141 +408,7 @@ export const resolvers = {
         throw error;
       }
     },
-    /* sendOTPLogin: async (
-      _: unknown,
-      args: { email: string; password: string; toPhone: string },
-      ctx: context,
-    ) => {
-      if (!args.email || !args.password || !args.toPhone) {
-        throw new Error("All field are required");
-      }
-      const user = await prisma.user.findUnique({
-        where: { email: args.email.toLowerCase().trim(), role: "USER" },
-      });
-      if (!user) {
-        throw new Error("Invalid credential");
-      }
-      if (!user.password) {
-        throw new Error("For manual login user password must");
-      }
-      const passwordMatches = await bcrypt.compare(
-        args.password,
-        user.password,
-      );
-      console.log("passwordMatches : ", passwordMatches);
-
-      if (!passwordMatches) {
-        throw new Error("Invalid credentials");
-      }
-
-      const twilioPhoneCheck = isValidPhone(args.toPhone);
-
-      if (!twilioPhoneCheck) {
-        throw new Error("Invalid credentials - Enter correct phone number");
-      }
-
-      const twilioVerifyServiceId = process.env.TWILIO_SERVICE_SID;
-
-      if (!twilioVerifyServiceId) {
-        throw new Error("twilioServiceId not configured");
-      }
-
-      const twilioClient = getTwilioClient();
-
-      console.log("twilioClient through sendOTP : ", twilioClient);
-
-      try {
-        const verificationRes = await twilioClient.verify.v2
-          .services(twilioVerifyServiceId)
-          .verifications.create({
-            to: args.toPhone,
-            channel: "sms",
-          });
-        console.log("status after send OTP to the user : ", verificationRes);
-
-        const Userdata = await prisma.user.update({
-          where: { email: user.email },
-          data: { phone: args.toPhone },
-        });
-
-        console.log("data after update phone ", Userdata);
-
-        setTempToken(ctx.res, Userdata.id);
-
-        return {
-          success: true,
-          otpMsg: "OTP sent to phone or email",
-        };
-      } catch (error) {
-        console.log("Failed to send OTP : ", error);
-        throw new Error("Failed to send OTP : ");
-      }
-    }, */
-    /* verifyOTP: async (
-      _parent: unknown,
-      args: { code: string },
-      ctx: context,
-    ) => {
-      try {
-        if (!args.code) {
-          throw new Error("OTP required to verify ");
-        }
-        const getTempToken = ctx.req.cookies.tempToken;
-        if (!getTempToken) {
-          throw new Error("Session or Time for OTP expired- sent OTP again");
-        }
-        const decoded = verifyTempToken(getTempToken);
-        const userId = decoded.userId;
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (!user) {
-          throw new Error("User not found to verifying the OTP");
-        }
-        if (!user.phone) {
-          throw new Error("No phone found - please start login again");
-        }
-
-        const verifyServiceId = process.env.TWILIO_SERVICE_SID;
-        if (!verifyServiceId) {
-          throw new Error("Twillio verify service id, not found in env file");
-        }
-        const twilioClient = getTwilioClient();
-        const verifyCheck = await twilioClient.verify.v2
-          .services(verifyServiceId)
-          .verificationChecks.create({
-            to: user.phone,
-            code: args.code,
-          });
-
-        console.log("verifyCheck ", verifyCheck);
-
-        if (verifyCheck.status === "approved") {
-          await prisma.user.update({
-            where: { id: userId }, //update phone verified
-            data: { phoneVerified: true },
-          });
-
-          ctx.res.clearCookie("tempToken", tempCookieOptions);
-
-          setTokens(ctx.res, userId, ctx.role); //set Tokens access & refresh
-          console.log("accessToken : ", ctx.req.cookies.accessToken);
-          console.log("refreshToken : ", ctx.req.cookies.refreshToken);
-
-          return {
-            success: true,
-            otpMsg: "OTP verified - login successfully",
-          };
-        } else if (verifyCheck.status === "expired") {
-          const err = Error;
-          throw new Error("OTP expired- please login and try again");
-        } else {
-          throw new Error("Invalid OTP code- please try again");
-        }
-      } catch (error) {
-        console.log("error in verifyOTP : ", error);
-        throw error;
-      }
-    }, */
-
+    
     sendOTPLogin: async (
       _: unknown,
       args: { email: string; password: string; toPhone: string },
@@ -611,17 +438,9 @@ export const resolvers = {
       if (!twilioVerifyServiceId)
         throw new Error("twilioServiceId not configured");
 
-      // const twilioClient = getTwilioClient();
-
-      // delete old email OTPs
       await prisma.emailOtp.deleteMany({ where: { email: user.email } });
 
       try {
-        // SMS : Twilio
-        /* const smsRes = await twilioClient.verify.v2
-          .services(twilioVerifyServiceId)
-          .verifications.create({ to: args.toPhone, channel: "sms" });
-        console.log("SMS sent:", smsRes.status); */
 
         const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000);

@@ -1,7 +1,7 @@
 import {io} from 'socket.io-client'
 
-export const socket = io("http://localhost:4003", {
-// export const socket = io("https://socialevent-platform-snhu.onrender.com/graphql", {
+console.log("WS URL:", import.meta.env.VITE_WS_URL);
+export const socket = io(import.meta.env.VITE_WS_URL, {
   withCredentials: true,
   transports:["websocket","polling"],
   autoConnect:true

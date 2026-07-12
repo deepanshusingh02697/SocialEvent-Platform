@@ -4,21 +4,17 @@ import { ApolloClient, createHttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4003/graphql",
-  // uri: "https://socialevent-platform-snhu.onrender.com/graphql", 
+  uri: import.meta.env.VITE_GRAPHQL_URL,
   credentials: "include",
 });
 
 const refreshAccessToken = async (): Promise<boolean> => {
-  const response = await fetch(
-    "https://socialevent-platform-snhu.onrender.com/graphql",
-    {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: `mutation { refreshToken }` }),
-    },
-  );
+  const response = await fetch(import.meta.env.VITE_GRAPHQL_URL, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: `mutation { refreshToken }` }),
+  });
 
   const data = await response.json();
   if (data.errors) throw new Error("Refresh failed");
@@ -28,13 +24,7 @@ const refreshAccessToken = async (): Promise<boolean> => {
 let isRefreshing = false;
 
 const errorLink = onError(
-  ({
-    graphQLErrors,
-    networkError,
-    operation,
-    forward,
-  }: any) => {
-
+  ({ graphQLErrors, networkError, operation, forward }: any) => {
     const isNetwork401 =
       networkError &&
       "statusCode" in networkError &&

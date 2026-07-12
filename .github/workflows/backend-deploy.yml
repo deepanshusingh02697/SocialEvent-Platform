@@ -3,9 +3,15 @@ name: Deploy SocialEvent Backend
 on:
   push:
     branches:
-      - addNewFeature
+      - devopsFeature
     paths:
-      - 'Backend/**'
+      - "Backend/**"
+
+  pull_request:
+    branches:
+      - devopsFeature
+    paths:
+      - "Backend/**"
 
 jobs:
   build-and-deploy:
@@ -30,5 +36,10 @@ jobs:
         working-directory: Backend
         run: npx prisma generate
 
+      # Docker image
+      - name: Build Docker Image
+        run: docker build -t socialevent-backend ./Backend
+
       - name: Trigger Render Deployment
+        if: github.event_name == 'push'
         run: curl -X POST "${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}"

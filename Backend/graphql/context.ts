@@ -11,7 +11,6 @@ export type context = {
   role: Role;
   io: Server;
 };
-//Apollo only passes {req,res} to context functions - io must come via closure
 export const createCheckAuth =
   (io: Server) =>
   async ({ req, res }: { req: Request; res: Response }): Promise<context> => {
@@ -67,11 +66,7 @@ export const checkemail = (email: string): string => {
 };
 
 export const checkPassword = (password: string): string => {
-  // 8 characters
-  // 1 uppercase letter
-  // 1 lowercase letter
-  // 1 number
-  // 1 special character
+
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#()_\-+=])[A-Za-z\d@$!%*?&^#()_\-+=]{8,}$/;
 

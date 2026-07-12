@@ -19,8 +19,9 @@ const httpServer = createServer(app);
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",//add github actions
-      "https://socialevent-platform-client.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://socialevent-devops-client.onrender.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -33,14 +34,14 @@ const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:5173",
-      "https://socialevent-platform-client.onrender.com",
+      "http://localhost:3000",
+      "https://socialevent-devops-client.onrender.com",
     ],
     methods: ["GET", "POST"],
     credentials: true,
   },
   transports: ["websocket", "polling"],
 });
-console.log("Socekt.io server initialized ");
 
 io.on("connect", (socket) => {
   console.log("User connected");

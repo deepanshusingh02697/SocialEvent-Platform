@@ -3,9 +3,12 @@ name: Deploy SocialEvent Frontend
 on:
   push:
     branches:
-      - addNewFeature
+      - devopsFeature
     paths:
       - 'Client/**'
+  pull_request:
+    branches:
+      - devopsFeature
 
 jobs:
   build-and-deploy:
@@ -30,9 +33,13 @@ jobs:
         working-directory: Client
         run: npm run build
         env:
-          VITE_BACKEND_URL: ${{ secrets.PRODUCTION_BACKEND_URL }}
+          VITE_GRAPHQL_URL: ${{ secrets.PRODUCTION_BACKEND_URL}}
           VITE_WS_URL: ${{ secrets.PRODUCTION_WS_URL }}
           CI: false
+        
+      - name: Build Docker Image
+        run: docker build -t socialevent-frontend ./Client
 
       - name: Trigger Render Deployment
+        if: github.event_name == 'push'
         run: curl -X POST "${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}"

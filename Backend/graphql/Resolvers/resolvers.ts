@@ -22,7 +22,6 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 export const resolvers = {
   DateTime: DateTimeResolver,
 
-  //field resolver
   Event: {
     attendeeCount: async (parent: { id: number }, _: unknown, ctx: context) => {
       console.log("Field resolver i.e Event called : ");

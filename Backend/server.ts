@@ -27,8 +27,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
     optionsSuccessStatus: 200,
-  }),
-);
+  })
+)
 
 const io = new Server(httpServer, {
   cors: {
@@ -40,7 +40,7 @@ const io = new Server(httpServer, {
     methods: ["GET", "POST"],
     credentials: true,
   },
-  transports: ["websocket", "polling"],
+  transports: ["websocket", "polling"]
 });
 
 io.on("connect", (socket) => {

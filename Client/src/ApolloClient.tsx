@@ -5,7 +5,7 @@ import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
   uri: import.meta.env.VITE_GRAPHQL_URL,
-  credentials: "include",
+  credentials: "include"
 });
 
 const refreshAccessToken = async (): Promise<boolean> => {

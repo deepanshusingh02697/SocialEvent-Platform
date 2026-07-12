@@ -21,7 +21,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:3000",
-      "https://socialevent-platform-client.onrender.com",
+      "https://socialevent-devops-client.onrender.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -35,7 +35,7 @@ const io = new Server(httpServer, {
     origin: [
       "http://localhost:5173",
       "http://localhost:3000",
-      "https://socialevent-platform-client.onrender.com",
+      "https://socialevent-devops-client.onrender.com",
     ],
     methods: ["GET", "POST"],
     credentials: true,

@@ -13,26 +13,37 @@ on:
     paths:
       - "Backend/**"
 
-
 jobs:
   build-and-deploy:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Backend/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: Backend
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: Backend
+        run: npx prisma generate
+
+      # Docker image
+      - name: Build Backend
+        working-directory: Backend
+        run: npm run build
 
       - name: Build Docker Image
-        run: |
-          docker build \
-          -t socialevent-backend \
-          ./Backend
-
+        run: docker build -t socialevent-backend ./Backend
 
       - name: Trigger Render Deployment
         if: github.event_name == 'push'
-        run: |
-          curl -X POST "${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}"
+        run: curl -X POST "${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}"

@@ -5,36 +5,41 @@ on:
     branches:
       - devopsFeature
     paths:
-      - "Client/**"
-
+      - 'Client/**'
   pull_request:
     branches:
       - devopsFeature
-    paths:
-      - "Client/**"
-
 
 jobs:
   build-and-deploy:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Client/package-lock.json
 
+      - name: Install Dependencies
+        working-directory: Client
+        run: npm ci
+
+      - name: Build React Application
+        working-directory: Client
+        run: npm run build
+        env:
+          VITE_GRAPHQL_URL: ${{ secrets.PRODUCTION_BACKEND_URL}}
+          VITE_WS_URL: ${{ secrets.PRODUCTION_WS_URL }}
+          CI: false
+        
       - name: Build Docker Image
-        run: |
-          docker build \
-          --build-arg VITE_GRAPHQL_URL=${{ secrets.PRODUCTION_GRAPHQL_URL }} \
-          --build-arg VITE_WS_URL=${{ secrets.PRODUCTION_WS_URL }} \
-          -t socialevent-frontend \
-          ./Client
-
+        run: docker build -t socialevent-frontend ./Client
 
       - name: Trigger Render Deployment
         if: github.event_name == 'push'
-        run: |
-          curl -X POST "${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}"
+        run: curl -X POST "${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}"

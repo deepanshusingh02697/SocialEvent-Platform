@@ -37,10 +37,6 @@ jobs:
         run: npx prisma generate
 
       # Docker image
-      - name: Build Backend
-        working-directory: Backend
-        run: npm run build
-
       - name: Build Docker Image
         run: docker build -t socialevent-backend ./Backend
 

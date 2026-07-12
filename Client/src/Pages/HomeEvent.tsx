@@ -239,7 +239,6 @@ export default function HomeEvent() {
           </div>
 
           {res.length === 0 ? (
-            // <p className={styles.noEvent}>No events found{isNearbyMode ? " nearby" : ""}.</p>
             <>
               <div className={styles.noEvent}>
                 <div className={styles.noEventIcon}>📅</div>
@@ -269,11 +268,6 @@ export default function HomeEvent() {
                   <div className={styles.eventCartBlocktext}>
                     <div className={styles.titleDis}>
                       <div>{ele.category}</div>
-                      {/* <div>
-                        {isNearbyMode && ele.distance
-                          ? `${ele.distance.toFixed(1)} km away`
-                          : `${ele.distance || 0} km away`}
-                      </div> */}
                       <div>
                         {ele.distance
                           ? `${(ele.distance * 1.60934).toFixed(1)} km away`

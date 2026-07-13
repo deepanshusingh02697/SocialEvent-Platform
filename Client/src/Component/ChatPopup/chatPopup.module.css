@@ -1,0 +1,71 @@
+.popupCon {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: rgba(231, 231, 231, 0.83);
+  display: grid;
+  place-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+.popup {
+  border-radius: "20px";
+  width: 500px;
+  max-height: 600px;
+  background-color: #ffffff;
+  font-size: 18px;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+}
+.handleDel {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 0.5px solid gray;
+}
+.cross:hover {
+  border-radius: 50%;
+  background-color: gainsboro;
+}
+.chatBlock {
+  display: grid;
+  grid-template-columns: 0.75fr 3fr 1fr;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.chatBlock img {
+  width:50px;
+  height: 50px;
+  border-radius: 50px;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+  border: 2px solid blue;
+}
+
+.chatUser {
+  width: 100%;
+  text-transform: capitalize;
+}
+.chatbtn {
+  display: flex;
+  padding: 8px 12px;
+  gap: 10px;
+  border-radius: 8px;
+  background-color: #175dfc;
+  color: white;
+  width: 80px;
+  height: 30px;
+  border: none;
+  outline: none;
+}
+@media screen and (max-width:480px) {
+  .popup {
+  border-radius: "20px";
+  width:95vw;
+  }
+}

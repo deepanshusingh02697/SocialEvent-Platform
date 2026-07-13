@@ -1,0 +1,305 @@
+.profileCon {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px 0;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  padding: 40px;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
+  position: relative;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.avatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatarFallback {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d6a4f, #40916c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.cameraOverlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #2d6a4f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerName {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+  word-break: break-word;
+}
+
+.headerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  color: #6b6b6b;
+}
+
+.cancelBtn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #1a6ef5;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s;
+  white-space: nowrap;
+}
+
+.cancelBtn:hover {
+  background: #155ed4;
+}
+
+.divider {
+  height: 1px;
+  background: #efefed;
+  margin: 0 0 28px;
+  border: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 28px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 24px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #787676;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.input {
+  font-size: 15px;
+  color: #1a1a1a;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid #e0ddd6;
+  padding: 10px 0;
+  outline: none;
+  transition: border-color 0.18s;
+  width: 100%;
+}
+
+.input:focus {
+  border-color: #2d6a4f;
+}
+
+.input::placeholder {
+  color: #c4c2bc;
+}
+
+.input:read-only {
+  color: #999;
+  cursor: default;
+}
+
+.saveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: #2d6a4f;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    transform 0.12s;
+  margin-top: 8px;
+  width: fit-content;
+}
+
+.saveBtn:hover {
+  background: #245c43;
+  transform: translateY(-1px);
+}
+
+.saveBtn:active {
+  transform: translateY(0);
+}
+
+.interestsSection {
+  margin-top: 8px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 14px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.tag {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #d6d3cc;
+  background: #fafaf8;
+  font-size: 13px;
+  color: #4a4a4a;
+  font-weight: 400;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s;
+}
+
+.tag:hover,
+.tagActive {
+  border-color: #2d6a4f;
+  background: #edf5f1;
+  color: #2d6a4f;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 28px 20px;
+  }
+
+  .cancelBtn {
+    position: static;
+    align-self: flex-end;
+    margin-bottom: 20px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .profileCon {
+    padding: 16px 0;
+  }
+
+  .cancelBtn {
+    position: absolute;
+    align-self: flex-end;
+    right: 10px;
+    margin-bottom: 10px;
+    font-size: 10px;
+
+  }
+  .card {
+    padding: 20px 14px;
+    border-radius: 14px;
+  }
+
+  .headerName {
+    font-size: 18px;
+  }
+
+  .avatarFallback {
+    width: 64px;
+    height: 64px;
+  }
+
+  .saveBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tags {
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 12px;
+    padding: 5px 11px;
+  }
+}

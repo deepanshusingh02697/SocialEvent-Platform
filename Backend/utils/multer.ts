@@ -24,3 +24,25 @@ export const eventImgUpload = multer({
   },
 });
 
+const avatarStorage = multer.diskStorage({
+    destination:function(req,file,cb){
+        cb(null,"./upload/AvatarImage");
+    },
+    filename:(req,file,cb)=>{
+        cb(null,`${Date.now()}-${file.originalname}`)
+    }
+}) 
+export const userImgUpload = multer({
+  storage:avatarStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024,//10mb
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+ 
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error("Only JPG, PNG, and WEBP images are allowed"));
+    }
+    cb(null, true);
+  },
+});

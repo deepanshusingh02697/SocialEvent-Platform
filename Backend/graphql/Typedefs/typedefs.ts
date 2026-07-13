@@ -3,12 +3,6 @@ enum Role{
     ADMIN
     USER
 }
-enum MessageStatus {
-  SENT
-  DELIVERED
-  READ
-}
-
 scalar DateTime
 # User
 type User{
@@ -23,9 +17,11 @@ type User{
 
     phone:String
     phoneVerified:Boolean
+    emailVerified:Boolean
     isActive: Boolean
 
     profile:Profile
+    avatar:String
 
     interests:[UserInterest]
     attendees:[EventParticipant]
@@ -40,7 +36,7 @@ type Profile{
     bio:String
 
     latitude:Float
-    logitude:Float
+    longitude:Float
 
     userId:Int!
     user: User!
@@ -109,11 +105,10 @@ type EventParticipant {
 }
 
 type Message{
-    id: ID!
+    id: Int!
     content:String!
-    status:MessageStatus!
     senderId:Int!
-    receivedId:Int!
+    receiverId:Int!
     sender:User!
     receiver:User!
     createdAt:String!
@@ -128,10 +123,13 @@ type Query{
 
 
     # getEvents: [Event!]!
-    getEvents(category:String, search:String,fromDate:String,toDate:String):[Event!]!
+    getEvents(category:String, search:String,fromDate:String,toDate:String,latitude: Float,longitude: Float):[Event!]!
+
     getEvent(eventId:ID!):Event
 
-    nearbyEvents(latitude:Float! longitude:Float! radiusKm:Float! category:String):[Event!]!
+    nearbyEvents(latitude:Float! longitude:Float! radiusKm:Float! category:String, search:String):[Event!]!    
+
+    getPersonalisedEvents(category: [String!]!,eventDetailId:String): [Event!]!
 
     #Events - authenticated user will access
     userJoinedEvents:[Event]!
@@ -140,15 +138,15 @@ type Query{
     # Chats
     getMessages(receiverId:Int!):[Message] #return array of message objects
 
-
     #Admin 
-    adminGetUsers(page:Int,limit:Int):[User!]!
+    adminGetUsers(search:String):[User!]!
     adminGetEvents: [Event!]!
 }
 
+
 type Mutation{
     signUp(firstname:String!,lastname:String!,email:String!,password:String!):AuthResponse!
-    logIn(email:String!,password:String!):AuthResponse!
+    adminlogIn(email:String!,password:String!):AuthResponse!
     googleLogin(idToken:String!):AuthResponse!
     sendOTPLogin(email:String!,password:String!,toPhone:String!):OtpResponse!
     verifyOTP(code:String!):OtpResponse!
@@ -156,10 +154,10 @@ type Mutation{
     logOut:Boolean
 
 
-
     # update Profile
-    updateProfile(latitude:Float!,longitude:Float!,bio:String!,profilePic:String!):Profile!
+    updateProfile(latitude:Float,longitude:Float,bio:String,profilePic:String):Profile!
     deleteProfile:Boolean!
+    editUserProfile(firstname:String,lastname:String,avatar:String,email:String):User!
 
     #Interests
     addInterest(interestId:ID!):UserInterest!
@@ -169,7 +167,8 @@ type Mutation{
     # Events - ADMIN create only
     createEvent( title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String!,eventEndDate:String!,image:String): Event!
 
-    updateEvent(eventId:ID!, title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String!,eventEndDate:String!,image:String): Event!
+    updateEvent(eventId:ID!, title:String!,description:String!,category:String!,Eventlocation:String!,latitude:Float,longitude:Float,eventStartDate:String,eventEndDate:String,image:String): Event!
+
     deleteEvent(eventId:ID!):Boolean!
 
     # Events - authenticated USER
@@ -179,6 +178,5 @@ type Mutation{
 
     #Message
     sendMessage(content:String!,receiverId:Int!):Message!
-    markMessageRead(fromUserId:ID!):Boolean!
 }
 `;

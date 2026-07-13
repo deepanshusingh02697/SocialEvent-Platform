@@ -4,21 +4,17 @@ import { ApolloClient, createHttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
-  // uri: "http://localhost:4003/graphql",
-  uri: "https://socialevent-platform-snhu.onrender.com/graphql", 
-  credentials: "include",
+  uri: import.meta.env.VITE_GRAPHQL_URL,
+  credentials: "include"
 });
 
 const refreshAccessToken = async (): Promise<boolean> => {
-  const response = await fetch(
-    "https://socialevent-platform-snhu.onrender.com/graphql",
-    {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: `mutation { refreshToken }` }),
-    },
-  );
+  const response = await fetch(import.meta.env.VITE_GRAPHQL_URL, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: `mutation { refreshToken }` }),
+  });
 
   const data = await response.json();
   if (data.errors) throw new Error("Refresh failed");
@@ -28,18 +24,7 @@ const refreshAccessToken = async (): Promise<boolean> => {
 let isRefreshing = false;
 
 const errorLink = onError(
-  ({
-    graphQLErrors,
-    networkError,
-    operation,
-    forward,
-    CombinedGraphQLErrors,
-  }: any) => {
-    console.log("ERROR LINK HIT");
-    console.log("graphQLErrors:", graphQLErrors);
-    console.log("networkError:", networkError);
-    console.log("CombinedGraphQLErrors: ", CombinedGraphQLErrors);
-
+  ({ graphQLErrors, networkError, operation, forward }: any) => {
     const isNetwork401 =
       networkError &&
       "statusCode" in networkError &&
@@ -58,7 +43,6 @@ const errorLink = onError(
         refreshAccessToken()
           .then(() => {
             isRefreshing = false;
-            console.log("Token refreshed, retrying operation...");
             forward(operation).subscribe({
               next: observer.next.bind(observer),
               error: observer.error.bind(observer),
@@ -66,10 +50,7 @@ const errorLink = onError(
             });
           })
           .catch((err: any) => {
-            const error = err as Error;
-            console.log("error in refresh apollo client is : ", error);
             isRefreshing = false;
-            console.log("Refresh failed, redirecting...");
             window.location.href = "/register";
             observer.error(err);
           });

@@ -129,6 +129,8 @@ type Query{
 
     nearbyEvents(latitude:Float! longitude:Float! radiusKm:Float! category:String, search:String):[Event!]!    
 
+    getPersonalisedEvents(category: [String!]!,eventDetailId:String): [Event!]!
+
     #Events - authenticated user will access
     userJoinedEvents:[Event]!
     eventParticipants(eventId:ID!):[User!]!

@@ -13,16 +13,6 @@ import { EditIdContextProvider } from "./Admin/AdminContext/AdminContext.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { client } from "./ApolloClient.tsx";
 
-/* const httpLink = createHttpLink({
-  // uri: "http://localhost:4003/graphql",
-  uri: "https://socialevent-platform-snhu.onrender.com/graphql",
-  credentials: "include",
-});
-const client = new ApolloClient({
-  link: httpLink,
-  cache: new InMemoryCache(),
-}); */
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ApolloProvider client={client}>

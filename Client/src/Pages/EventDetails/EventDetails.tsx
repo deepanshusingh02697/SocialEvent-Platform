@@ -4,10 +4,10 @@ import {
   FaUsers,
   FaArrowLeft,
 } from "react-icons/fa";
-// import { MdLocationOn } from "react-icons/md";
 import styles from "./eventDetail.module.css";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
+  GET_ATTENDITES_ChatPopup,
   GET_EVENT_DETAILS_QUERY,
   GET_EVENTS_QUERY,
   GET_USER_JOIN_QUERY,
@@ -17,7 +17,7 @@ import type {
   GET_USER_JOIN_Interface,
   Post_Join_Event_Interface,
 } from "../../Component/graphql/client";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { formatDate } from "../../Component/Context/conversion";
 
 import {
@@ -33,6 +33,11 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { ClipLoader } from "react-spinners";
+import { useEffect, useState } from "react";
+import QrModal from "../../Component/QR-Modal/QrModals";
+import SuggestionEvents from "../../Component/SuggestionEvents/SuggestionEvents";
+import ChatPopup from "../../Component/ChatPopup/ChatPopup";
+import { chatPopupContext } from "../../Component/Context/ChatPopupContext";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -44,6 +49,13 @@ L.Icon.Default.mergeOptions({
 export default function EventDetails() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showQrModal, setShowQrModal] = useState(false);
+
+  const { setIsOpenChat } = chatPopupContext();
+  const [selectedEventId, setSelectedEventId] = useState("");
+
   const { data, loading } = useQuery<GET_Event_Detail_Interface>(
     GET_EVENT_DETAILS_QUERY,
     {
@@ -72,24 +84,16 @@ export default function EventDetails() {
   const { data: checkJoinEvent } =
     useQuery<GET_USER_JOIN_Interface>(GET_USER_JOIN_QUERY);
 
+  const { data: chatAttendies } = useQuery<any>(GET_ATTENDITES_ChatPopup, {
+    variables: {
+      eventId: selectedEventId,
+    },
+    skip: !selectedEventId,
+  });
   const joinedEvensRes = checkJoinEvent?.userJoinedEvents;
-  if (!joinedEvensRes) return;
   const isjoin = joinedEvensRes?.some((ele) => ele.id === eventId) ?? false;
 
-  if (loading) {
-    return (
-      <div className="loadingOverlay">
-        <ClipLoader color="#6c21c8" size={48} />
-      </div>
-    );
-  }
-
-  const eventDetailData = data?.getEvent;
-  if (!eventDetailData) {
-    return;
-  }
-
-  const handleJoinEvent = async () => {
+    const handleJoinEvent = async () => {
     try {
       const res = await JoinEventMutaion({
         variables: {
@@ -113,6 +117,18 @@ export default function EventDetails() {
       }
     }
   };
+  //Scan QR
+  useEffect(() => {
+    const shouldAutoJoin = searchParams.get("autojoin") === "true";
+    if (shouldAutoJoin && !loading && joinedEvensRes && !isjoin) {
+      handleJoinEvent();
+      searchParams.delete("autojoin");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, isjoin, loading, joinedEvensRes]);
+
+
+
   const handleLeaveEvent = async () => {
     try {
       await leaveEvent({
@@ -137,11 +153,34 @@ export default function EventDetails() {
     }
   };
 
+  const handleQRCode = () => {
+    setShowQrModal(true);
+  };
+
+  if (!joinedEvensRes) return null;
+
+  if (loading) {
+    return (
+      <div className="loadingOverlay">
+        <ClipLoader color="#6c21c8" size={48} />
+      </div>
+    );
+  }
+  const openChatPopup = () => {
+    setSelectedEventId(String(eventId));
+    setIsOpenChat(true);
+  };
+
+  const eventDetailData = data?.getEvent;
+  if (!eventDetailData) {
+    return null;
+  }
+
   return (
     <>
       <div className="bodyCon">
         <div className={`container ${styles.eventDetailCon}`}>
-          <button className={styles.back} onClick={() => navigate(-1)}>
+          <button className={styles.back} onClick={() => navigate("/")}>
             <FaArrowLeft /> Back to Events
           </button>
           <div className={styles.wrapper}>
@@ -156,15 +195,20 @@ export default function EventDetails() {
               <span className={styles.category}>
                 {eventDetailData?.category}
               </span>
-              {isjoin ? (
-                <button className={styles.joinBtn} onClick={handleLeaveEvent}>
-                  Leave Event
+              <div style={{ display: "flex", gap: "20px" }}>
+                <button className={styles.joinBtn} onClick={handleQRCode}>
+                  Scan QR
                 </button>
-              ) : (
-                <button className={styles.joinBtn} onClick={handleJoinEvent}>
-                  Join Event
-                </button>
-              )}
+                {isjoin ? (
+                  <button className={styles.joinBtn} onClick={handleLeaveEvent}>
+                    Leave Event
+                  </button>
+                ) : (
+                  <button className={styles.joinBtn} onClick={handleJoinEvent}>
+                    Join Event
+                  </button>
+                )}
+              </div>
             </div>
 
             <h1 className={styles.title}>{eventDetailData?.title}</h1>
@@ -197,7 +241,9 @@ export default function EventDetails() {
                       {eventDetailData?.Eventlocation}
                     </p>
                     <p className={styles.detailSub}>
-                      {eventDetailData?.distance} km away
+                      {eventDetailData.distance
+                        ? `${eventDetailData?.distance.toFixed(2)} km away`
+                        : ""}
                     </p>
                   </div>
                 </div>
@@ -206,21 +252,26 @@ export default function EventDetails() {
                   <FaUsers className="detailIcon" />
                   <div>
                     <p className={styles.detailLabel}>Attendees</p>
-                    <p className={styles.detailValue}>
+                    {/* <p className={styles.detailValue}>
                       {eventDetailData?.attendeeCount} people attending
+                    </p> */}
+                    <p
+                      className={styles.detailValue}
+                      style={{ cursor: "pointer", color: "#3b82f6" }}
+                      onClick={openChatPopup}
+                    >
+                      {isjoin
+                        ? eventDetailData?.attendeeCount - 1
+                        : eventDetailData?.attendeeCount}{" "}
+                      people attending
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* <div className={styles.mapBox}>
-                <MdLocationOn className="detailIcon" />
-                <p className={styles.mapLabel}>Map View</p>
-                <p className={styles.mapCoords}>Lat: 40.7829, Lng: -73.9654</p>
-              </div> */}
               <MapContainer
                 center={[eventDetailData.latitude, eventDetailData.longitude]}
-                zoom={14}
+                zoom={10}
                 style={{ width: "100%", height: "100%", borderRadius: "12px" }}
                 scrollWheelZoom={false}
               >
@@ -246,8 +297,24 @@ export default function EventDetails() {
               <p className={styles.aboutText}>{eventDetailData?.description}</p>
             </div>
           </div>
+          <SuggestionEvents
+            eventDetailCategory={eventDetailData?.category}
+            id={eventDetailData?.id}
+          />
         </div>
       </div>
+
+      {showQrModal && (
+        <QrModal
+          eventId={Number(eventId)}
+          onClose={() => setShowQrModal(false)}
+          isjoin={isjoin}
+        />
+      )}
+      <ChatPopup
+        userJoinedEvents={joinedEvensRes}
+        eventParticipants={chatAttendies?.eventParticipants ?? []}
+      />
     </>
   );
 }

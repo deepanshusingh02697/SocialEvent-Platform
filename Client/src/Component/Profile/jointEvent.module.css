@@ -5,225 +5,305 @@
   margin-top: 13px;
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
 }
- 
+
 .title {
   font-size: 25px;
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 24px;
 }
- 
+
 .list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
- 
+
+
+
 .card {
   display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
-  gap: 16px;
+  grid-template-columns: 110px minmax(180px, 1fr) auto;
+  gap: 20px;
   background: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-  align-items: flex-start;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  align-items: center;
 }
- 
+
+
+
 .image {
-  width: 110px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
- 
+
+
+
 .info {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
   min-width: 0;
 }
- 
+
+
 .category {
   display: inline-block;
-  background: #e8f0fe;
-  color: #3b5bdb;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
   width: fit-content;
+  background: #eef4ff;
+  color: #315dcc;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
 }
- 
+
+
 .eventTitle {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #171725;
   margin: 0;
-  white-space: nowrap;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
- 
+
+
 .meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 7px;
 }
- 
+
+
 .metaItem {
   display: flex;
-  text-align: end;
-  font-size: 16px;
-  color: #555;
-  gap: 0px;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
 }
- 
+
+
 .icon {
-  color: #888;
-  font-size: 16px;
+  color: #777;
+  font-size: 15px;
   flex-shrink: 0;
 }
- 
+
 .right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
+  justify-content: center;
+  gap: 12px;
+  min-width: 130px;
 }
-.right .metaItem{
-  gap: 0px;
+
+
+.right .metaItem {
+  gap: 6px;
 }
- 
-.right 
+
+
 .deleteBtn {
   color: #e53e3e;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 19px;
+  transition: 0.2s ease;
 }
- 
+
 .deleteBtn:hover {
   color: #c53030;
 }
- 
+
+
+
 .attendees {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: #3b5bdb;
+  color: #315dcc;
   cursor: pointer;
   text-decoration: underline;
+  white-space: nowrap;
 }
- 
-@media (max-width: 768px) {
-  .wrapper {
-    padding: 20px 16px;
-    border-radius: 14px;
-  }
- 
-  .title {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
- 
-  .card {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
- 
-  .image {
-    width: 80px;
-    height: 80px;
-  }
- 
-  .eventTitle {
-    font-size: 16px;
-  }
- 
-  .metaItem {
-    font-size: 14px;
-  }
- 
-  .right {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 10px;
-  }
-}
-.NotJoinCon{
+
+
+
+.NotJoinCon {
   display: flex;
   gap: 15px;
-  align-items: center
+  align-items: center;
 }
-.NotJoinCon button{
-  padding: 8px 12px;
+
+
+.NotJoinCon button {
+  padding: 8px 14px;
   border: none;
   outline: none;
   border-radius: 7px;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
-.NotJoinCon button:hover{
+
+
+.NotJoinCon button:hover {
   background-color: #beb9b9;
   color: white;
 }
- 
-@media (max-width: 480px) {
+
+
+
+@media (max-width: 768px) {
+
   .wrapper {
-    padding: 16px 12px;
-    border-radius: 12px;
-    margin-top: 8px;
-  }
- 
-  .title {
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
- 
-  .card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 14px 12px;
+    padding: 20px 14px;
+    border-radius: 14px;
   }
 
- 
-  .image {
-    width: 70px;
-    height: 70px;
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 18px;
   }
- 
+
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 16px;
+  }
+
+
+  .image {
+    width: 75px;
+    height: 75px;
+  }
+
+
+  .info {
+    width: 100%;
+  }
+
+
+  .category {
+    font-size: 12px;
+  }
+
+
+  .eventTitle {
+    font-size: 17px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+
+
+  .metaItem {
+    font-size: 14px;
+  }
+
+
+  .right {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #eeeeee;
+  }
+
+
+  .attendees {
+    font-size: 14px;
+  }
+
+}
+
+
+
+
+@media (max-width: 480px) {
+
+
+  .wrapper {
+    padding: 14px 10px;
+    margin-top: 8px;
+  }
+
+
+  .title {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+
+  .card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+
+  .image {
+    width: 65px;
+    height: 65px;
+  }
+
+
   .eventTitle {
     font-size: 15px;
-    white-space: normal;
   }
- 
+
+
+  .meta {
+    gap: 6px;
+  }
+
+
   .metaItem {
     font-size: 13px;
   }
- 
+
+
+  .icon {
+    font-size: 14px;
+  }
+
+
   .right {
-    width: 100%;
-    display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 8px;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 10px;
-  }
- 
-  .attendees {
-    font-size: 13px;
-    width: 100%;
     align-items: flex-start;
+    gap: 12px;
   }
+
+
+  .attendees {
+    width: 100%;
+    font-size: 13px;
+  }
+
+
+  .NotJoinCon {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+
+  .NotJoinCon button {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+
 }

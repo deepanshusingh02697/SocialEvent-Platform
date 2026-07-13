@@ -69,8 +69,6 @@ export default function HomeEvent() {
     },
   });
 
-  console.log("data for distance after query ; ", data);
-
   const { data: nearbyData, loading: nearbyLoading } =
     useQuery<NEARBY_EVENT_Interface>(NEARBY_EVENTS_QUERY, {
       skip: !isNearbyMode || !userCoords,
@@ -79,18 +77,11 @@ export default function HomeEvent() {
         longitude: userCoords?.lng,
         radiusKm: isDistance,
         category: isCatefory === "All" ? null : isCatefory,
-        search: isSearch ? isSearch:null
+        search: isSearch ? isSearch : null,
       },
     });
 
   const findNearByEvents = () => {
-    /* if (isallowloc === true && isDistance < 1) {
-      toast("Please select the Distance", {
-        position: "top-right",
-        type: "info",
-      });
-      return;
-    } */
     if (!navigator.geolocation) {
       toast("Geolocation not supported by your browser", {
         position: "top-right",
@@ -140,17 +131,16 @@ export default function HomeEvent() {
 
   const uniqueCategories = [
     "All",
-    // ...new Set(res.map((cur: any) => cur.category)),
     "Sports",
     "AI",
-     "Hackathon",
-    /* "Technology",
+    "Hackathon",
+    "Technology",
     "Music",
     "Travel",
     "Food",
     "Art",
     "Gaming",
-    "Business", */
+    "Business",
   ];
 
   if (isLoading) {
@@ -249,7 +239,25 @@ export default function HomeEvent() {
           </div>
 
           {res.length === 0 ? (
-            <p>No events found{isNearbyMode ? " nearby" : ""}.</p>
+            <>
+              <div className={styles.noEvent}>
+                <div className={styles.noEventIcon}>📅</div>
+
+                <h3>No events found{isNearbyMode ? " nearby" : ""}</h3>
+
+                <p>
+                  {isNearbyMode
+                    ? "Try increasing the search distance or clearing nearby mode."
+                    : "Try changing the category, date, or search keyword."}
+                </p>
+
+                {isNearbyMode && (
+                  <button className={styles.noEventBtn} onClick={resetNearby}>
+                    Clear Nearby Search
+                  </button>
+                )}
+              </div>
+            </>
           ) : (
             <div className={styles.eventCartCon}>
               {res.map((ele: any, idx: number) => (
@@ -260,11 +268,6 @@ export default function HomeEvent() {
                   <div className={styles.eventCartBlocktext}>
                     <div className={styles.titleDis}>
                       <div>{ele.category}</div>
-                      {/* <div>
-                        {isNearbyMode && ele.distance
-                          ? `${ele.distance.toFixed(1)} km away`
-                          : `${ele.distance || 0} km away`}
-                      </div> */}
                       <div>
                         {ele.distance
                           ? `${(ele.distance * 1.60934).toFixed(1)} km away`

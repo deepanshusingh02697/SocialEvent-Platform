@@ -22,7 +22,6 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    console.log('is open value from popupContext.tex ; ',isOpen);
     
     if (!isOpen) return;
     const handleEsc = (e: KeyboardEvent) => {

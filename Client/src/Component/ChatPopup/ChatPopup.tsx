@@ -21,7 +21,7 @@ export default function ChatPopup({
   const { isOpenChat, closeChatPopup } = chatPopupContext();
 
   console.log(userJoinedEvents);
-  console.log("eventParticipants. : ",eventParticipants);
+  console.log("eventParticipants. : ", eventParticipants);
   const attendieExceptAuth = eventParticipants.filter(
     (ele) => ele.email !== authUserData?.email,
   );
@@ -43,7 +43,14 @@ export default function ChatPopup({
                 <div className={styles.chatUser}>
                   {ele?.firstname + " " + ele?.lastname}
                 </div>
-                <NavLink to={`/chat/${ele?.id}`}>
+                <NavLink
+                  to={`/chat/${ele?.id}`}
+                  state={{
+                    firstname: ele.firstname,
+                    lastname: ele.lastname,
+                    profile: ele.profile,
+                  }}
+                >
                   <button className={styles.chatbtn}>
                     <BsChatDotsFill />
                     Chat

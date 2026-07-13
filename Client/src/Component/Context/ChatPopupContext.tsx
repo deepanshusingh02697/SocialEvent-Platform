@@ -19,7 +19,6 @@ export function ChatContextProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    console.log("is open value from popupContext.tex ; ", isOpenChat);
     if (!isOpenChat) return;
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {

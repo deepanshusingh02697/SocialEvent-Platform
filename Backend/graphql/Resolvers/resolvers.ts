@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
-import { context, isAdmin, isAuth, twoUserRoomId } from "../context";
+import { checkemail, checkPassword, context, isAdmin, isAuth, twoUserRoomId } from "../context";
 import {
   accessCookieOptions,
   refreshCookieOptions,
@@ -22,7 +22,6 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 export const resolvers = {
   DateTime: DateTimeResolver,
 
-  //field resolver
   Event: {
     attendeeCount: async (parent: { id: number }, _: unknown, ctx: context) => {
       console.log("Field resolver i.e Event called : ");
@@ -51,45 +50,6 @@ export const resolvers = {
     getAllInterests: async () => {
       return prisma.interest.findMany({ orderBy: { name: "asc" } });
     },
-
-    /*   getEvents: async (
-      _: unknown,
-      args: {
-        category?: string;
-        search?: string;
-        fromDate?: string;
-        toDate?: string;
-      },
-      ctx: context,
-    ) => {
-      return await prisma.event.findMany({
-        where: {
-          isArchive: false,
-          ...(args.category && { category: args.category }),
-
-          ...(args.search && {
-            OR: [
-              { title: { contains: args.search, mode: "insensitive" } },
-              { description: { contains: args.search, mode: "insensitive" } },
-              { Eventlocation: { contains: args.search, mode: "insensitive" } },
-            ],
-          }),
-
-          ...(args.fromDate && {
-            eventStartDate: { gte: new Date(args.fromDate) },
-          }),
-          ...(args.toDate && {
-            eventEndDate: { lte: new Date(args.toDate) },
-          }),
-        },
-        include: {
-          participants: {
-            include: { user: true },
-          },
-        },
-        orderBy: { eventStartDate: "asc" },
-      });
-    }, */
 
     getEvents: async (
       _: unknown,
@@ -189,7 +149,7 @@ export const resolvers = {
       },
     ) => {
       console.log(args.search, args.category, args.radiusKm);
-      
+
       const categoryFilter = args.category
         ? `AND category = '${args.category}'`
         : "";
@@ -200,7 +160,7 @@ export const resolvers = {
         OR "Eventlocation" ILIKE '%${args.search}%'
       )`
         : "";
-      
+
       const events = await prisma.$queryRawUnsafe<any[]>(`
         SELECT *,
           (point(${args.longitude}, ${args.latitude}) <@> point(longitude, latitude)) AS distance
@@ -214,7 +174,30 @@ export const resolvers = {
           ${searchFilter}
         ORDER BY distance ASC
       `);
- console.log("Data after filter : ",events);
+      console.log("Data after filter : ", events);
+      return events;
+    },
+
+    getPersonalisedEvents: async (
+      _: unknown,
+      args: { category: string[]; eventDetailId: String },
+      ctx: context,
+    ) => {
+      isAuth(ctx);
+
+      console.log(args.category, args.eventDetailId);
+
+      const events = await prisma.event.findMany({
+        where: {
+          category: {
+            in: args.category,
+          },
+          NOT: {
+            id: Number(args.eventDetailId),
+          },
+        },
+      });
+
       return events;
     },
 
@@ -301,14 +284,17 @@ export const resolvers = {
           throw new Error(
             "Account wiht this email already Exist - please logIn",
           );
+        const checkEmail=checkemail(args.email)
 
-        const hashPassword = await bcrypt.hash(args.password, 10);
+        const checkpassword=checkPassword(args.password)
+
+        const hashPassword = await bcrypt.hash(checkpassword, 10);
 
         const user = await prisma.user.create({
           data: {
             firstname: args.firstname,
             lastname: args.lastname,
-            email: args.email,
+            email: checkEmail,
             password: hashPassword,
           },
           include: {
@@ -421,141 +407,7 @@ export const resolvers = {
         throw error;
       }
     },
-    /* sendOTPLogin: async (
-      _: unknown,
-      args: { email: string; password: string; toPhone: string },
-      ctx: context,
-    ) => {
-      if (!args.email || !args.password || !args.toPhone) {
-        throw new Error("All field are required");
-      }
-      const user = await prisma.user.findUnique({
-        where: { email: args.email.toLowerCase().trim(), role: "USER" },
-      });
-      if (!user) {
-        throw new Error("Invalid credential");
-      }
-      if (!user.password) {
-        throw new Error("For manual login user password must");
-      }
-      const passwordMatches = await bcrypt.compare(
-        args.password,
-        user.password,
-      );
-      console.log("passwordMatches : ", passwordMatches);
-
-      if (!passwordMatches) {
-        throw new Error("Invalid credentials");
-      }
-
-      const twilioPhoneCheck = isValidPhone(args.toPhone);
-
-      if (!twilioPhoneCheck) {
-        throw new Error("Invalid credentials - Enter correct phone number");
-      }
-
-      const twilioVerifyServiceId = process.env.TWILIO_SERVICE_SID;
-
-      if (!twilioVerifyServiceId) {
-        throw new Error("twilioServiceId not configured");
-      }
-
-      const twilioClient = getTwilioClient();
-
-      console.log("twilioClient through sendOTP : ", twilioClient);
-
-      try {
-        const verificationRes = await twilioClient.verify.v2
-          .services(twilioVerifyServiceId)
-          .verifications.create({
-            to: args.toPhone,
-            channel: "sms",
-          });
-        console.log("status after send OTP to the user : ", verificationRes);
-
-        const Userdata = await prisma.user.update({
-          where: { email: user.email },
-          data: { phone: args.toPhone },
-        });
-
-        console.log("data after update phone ", Userdata);
-
-        setTempToken(ctx.res, Userdata.id);
-
-        return {
-          success: true,
-          otpMsg: "OTP sent to phone or email",
-        };
-      } catch (error) {
-        console.log("Failed to send OTP : ", error);
-        throw new Error("Failed to send OTP : ");
-      }
-    }, */
-    /* verifyOTP: async (
-      _parent: unknown,
-      args: { code: string },
-      ctx: context,
-    ) => {
-      try {
-        if (!args.code) {
-          throw new Error("OTP required to verify ");
-        }
-        const getTempToken = ctx.req.cookies.tempToken;
-        if (!getTempToken) {
-          throw new Error("Session or Time for OTP expired- sent OTP again");
-        }
-        const decoded = verifyTempToken(getTempToken);
-        const userId = decoded.userId;
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (!user) {
-          throw new Error("User not found to verifying the OTP");
-        }
-        if (!user.phone) {
-          throw new Error("No phone found - please start login again");
-        }
-
-        const verifyServiceId = process.env.TWILIO_SERVICE_SID;
-        if (!verifyServiceId) {
-          throw new Error("Twillio verify service id, not found in env file");
-        }
-        const twilioClient = getTwilioClient();
-        const verifyCheck = await twilioClient.verify.v2
-          .services(verifyServiceId)
-          .verificationChecks.create({
-            to: user.phone,
-            code: args.code,
-          });
-
-        console.log("verifyCheck ", verifyCheck);
-
-        if (verifyCheck.status === "approved") {
-          await prisma.user.update({
-            where: { id: userId }, //update phone verified
-            data: { phoneVerified: true },
-          });
-
-          ctx.res.clearCookie("tempToken", tempCookieOptions);
-
-          setTokens(ctx.res, userId, ctx.role); //set Tokens access & refresh
-          console.log("accessToken : ", ctx.req.cookies.accessToken);
-          console.log("refreshToken : ", ctx.req.cookies.refreshToken);
-
-          return {
-            success: true,
-            otpMsg: "OTP verified - login successfully",
-          };
-        } else if (verifyCheck.status === "expired") {
-          const err = Error;
-          throw new Error("OTP expired- please login and try again");
-        } else {
-          throw new Error("Invalid OTP code- please try again");
-        }
-      } catch (error) {
-        console.log("error in verifyOTP : ", error);
-        throw error;
-      }
-    }, */
-
+    
     sendOTPLogin: async (
       _: unknown,
       args: { email: string; password: string; toPhone: string },
@@ -585,17 +437,9 @@ export const resolvers = {
       if (!twilioVerifyServiceId)
         throw new Error("twilioServiceId not configured");
 
-      // const twilioClient = getTwilioClient();
-
-      // delete old email OTPs
       await prisma.emailOtp.deleteMany({ where: { email: user.email } });
 
       try {
-        // SMS : Twilio
-        /* const smsRes = await twilioClient.verify.v2
-          .services(twilioVerifyServiceId)
-          .verifications.create({ to: args.toPhone, channel: "sms" });
-        console.log("SMS sent:", smsRes.status); */
 
         const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
@@ -606,8 +450,6 @@ export const resolvers = {
           data: { email: user.email, otp: emailOtp, expiresAt },
         });
         console.log("Email OTP saved in DB:", emailOtp);
-
-        // send via SendGrid
         const emailRes = await sgMail.send({
           to: user.email,
           from: process.env.TWILIO_SENDGRID_FROM_EMAIL!,
@@ -911,7 +753,7 @@ export const resolvers = {
         }
       }
 
-      return await prisma.event.create({
+      const event = await prisma.event.create({
         data: {
           title: args.title,
           description: args.description,
@@ -925,6 +767,16 @@ export const resolvers = {
         },
         include: { participants: true },
       });
+
+      ctx.io.emit("receive_notification", {
+        type: "NEW_EVENT",
+        title: event.title,
+        message: `A new event "${event.title}" has been created.`,
+        eventId: event.id,
+        createdAt: new Date(),
+      });
+
+      return event;
     },
     updateEvent: async (
       _: unknown,

@@ -14,6 +14,9 @@ export const GET_CURRENT_USER_QUERY = gql`
       interests {
         userId
         interestId
+        interest {
+          name
+        }
       }
     }
   }
@@ -56,16 +59,28 @@ export const GET_EVENTS_QUERY = gql`
     }
   }
 `;
-/* export const GET_USER_PROFILE_QUERY = gql`
-  query Query($userId: ID!) {
-    getUserProfile(userId: $userId) {
-      bio
+
+export const GET_PersonalisedEvent_QUERY = gql`
+  query Get_Personalised_Query($category: [String!]!, $eventDetailId: String) {
+    getPersonalisedEvents(category: $category, eventDetailId: $eventDetailId) {
+      id
+      title
+      description
+      category
+      Eventlocation
       latitude
       longitude
-      profilePic
+      eventStartDate
+      eventEndDate
+      image
+      attendeeCount
+      isArchive
+      distance
+      createdAt
+      updatedAt
     }
   }
-`; */
+`;
 
 export const GET_ALL_INTERESTS_QUERY = gql`
   query Query {
@@ -98,7 +113,13 @@ export const GET_EVENT_DETAILS_QUERY = gql`
   }
 `;
 export const NEARBY_EVENTS_QUERY = gql`
-  query Query($latitude: Float!, $longitude: Float!, $radiusKm: Float!,$category:String,$search:String) {
+  query Query(
+    $latitude: Float!
+    $longitude: Float!
+    $radiusKm: Float!
+    $category: String
+    $search: String
+  ) {
     nearbyEvents(
       latitude: $latitude
       longitude: $longitude

@@ -49,7 +49,6 @@ export default function Profile() {
 
   const getUserProfileRes = getProfileData?.currentUser;
 
-  console.log("getProfile of user interest is : ", getUserProfileRes);
 
   const userInterestIds = new Set(
     getUserProfileRes?.interests?.map((i) => String(i.interestId)) ?? [],
@@ -160,7 +159,6 @@ export default function Profile() {
     }
   };
 
-  console.log("iamgepreview : ", imagePreview);
 
   const displayAvatar = imagePreview
     ? getUserProfileRes?.avatar
@@ -289,7 +287,6 @@ export default function Profile() {
             <div className={styles.tags}>
               {allInterestsData?.getAllInterests.map((interest) => {
                 const isActive = userInterestIds.has(String(interest.id));
-                console.log("user interest is : ", isActive);
 
                 const isLoading = togglingId === Number(interest.id);
 

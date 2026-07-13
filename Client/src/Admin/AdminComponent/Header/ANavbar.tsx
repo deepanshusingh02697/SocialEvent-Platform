@@ -15,7 +15,7 @@ export default function ANavbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [logOutUser] = useMutation<Boolean>(POST_LOGOUT_MUTATION, {
+  const [logOutUser] = useMutation<boolean>(POST_LOGOUT_MUTATION, {
     refetchQueries: [{ query: GET_CURRENT_USER_QUERY }],
   });
 
@@ -32,7 +32,7 @@ export default function ANavbar() {
     } catch (error: any) {
       console.error("Logout failed : ", error);
       if (error.name === "AbortError" || error.message?.includes("aborted")) {
-        console.log("Logout redirect cleanup aborted safely.");
+        console.error("Logout redirect cleanup aborted safely.");
       } else {
         console.error("Logout failed : ", error);
       }

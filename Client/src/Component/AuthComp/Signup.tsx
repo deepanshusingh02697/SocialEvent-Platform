@@ -104,8 +104,8 @@ export default function Signup() {
           type: "warning",
         });
       } else {
-        console.log("Error is : ", error);
-        toast("Invalid Credentials, try again", {
+        const err = error as Error
+        toast(err.message, {
           position: "top-right",
           type: "warning",
         });

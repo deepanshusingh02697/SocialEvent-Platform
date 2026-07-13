@@ -11,7 +11,6 @@ export type context = {
   role: Role;
   io: Server;
 };
-//Apollo only passes {req,res} to context functions - io must come via closure
 export const createCheckAuth =
   (io: Server) =>
   async ({ req, res }: { req: Request; res: Response }): Promise<context> => {
@@ -53,4 +52,29 @@ export const isAdmin = (ctx: context) => {
 
 export const twoUserRoomId = <T>(senderId: T, receiverId: T) => {
   return [senderId, receiverId].sort().join("-");
+};
+
+export const checkemail = (email: string): string => {
+  const emailRegex =
+    /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+  if (!emailRegex.test(email.trim())) {
+    throw new Error("Please enter a valid email address.");
+  }
+
+  return email.trim().toLowerCase();
+};
+
+export const checkPassword = (password: string): string => {
+
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#()_\-+=])[A-Za-z\d@$!%*?&^#()_\-+=]{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    throw new Error(
+      "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character."
+    );
+  }
+
+  return password;
 };

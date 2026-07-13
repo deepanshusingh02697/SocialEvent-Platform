@@ -3,19 +3,19 @@
   padding: 0;
   box-sizing: border-box;
 }
- 
+
 .root {
   min-height: 100vh;
   background: #f5f4fa;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   padding: 24px 32px;
 }
- 
+
 .backLink {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color:#175dfc;
+  color: #175dfc;
   font-size: 14px;
   font-weight: 500;
   background: none;
@@ -24,11 +24,14 @@
   margin-bottom: 20px;
   text-decoration: none;
 }
- 
+
 .backLink:hover {
   text-decoration: underline;
 }
- 
+.eventDetailCon {
+  display: flex;
+  flex-direction: column;
+}
 .heroImage {
   width: 100%;
   height: 380px;
@@ -37,7 +40,7 @@
   display: block;
   margin-bottom: 24px;
 }
- 
+
 .heroPlaceholder {
   width: 100%;
   height: 380px;
@@ -45,14 +48,14 @@
   border-radius: 14px;
   margin-bottom: 24px;
 }
- 
+
 .card {
   background: #fff;
   border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.07);
 }
- 
+
 .topRow {
   display: flex;
   align-items: center;
@@ -61,7 +64,7 @@
   flex-wrap: wrap;
   gap: 12px;
 }
- 
+
 .badge {
   display: inline-block;
   padding: 5px 16px;
@@ -71,7 +74,7 @@
   background: #f0eaff;
   color: #175dfc;
 }
- 
+
 .editBtn {
   display: inline-flex;
   align-items: center;
@@ -84,65 +87,67 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition:
+    background 0.2s,
+    transform 0.1s;
 }
- 
+
 .editBtn:hover {
   background: #175dfc;
   transform: translateY(-1px);
 }
- 
+
 .eventTitle {
   font-size: 28px;
   font-weight: 800;
   color: #1a1a2e;
   margin-bottom: 28px;
 }
- 
+
 .infoMapRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 32px;
   margin-bottom: 32px;
 }
- 
+
 .infoList {
   display: flex;
   flex-direction: column;
   gap: 22px;
 }
- 
+
 .infoItem {
   display: flex;
   align-items: flex-start;
   gap: 14px;
 }
- 
+
 .infoIcon {
   color: #175dfc;
   font-size: 20px;
   margin-top: 2px;
   flex-shrink: 0;
 }
- 
+
 .infoLabel {
   font-size: 13px;
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 3px;
 }
- 
+
 .infoValue {
   font-size: 14px;
   color: #444;
 }
- 
+
 .infoSub {
   font-size: 12px;
   color: #999;
   margin-top: 2px;
 }
- 
+
 .mapBox {
   background: #e8e8f0;
   border-radius: 12px;
@@ -154,96 +159,96 @@
   min-height: 200px;
   padding: 24px;
 }
- 
+
 .mapIcon {
   font-size: 36px;
   color: #555;
 }
- 
+
 .mapLabel {
   font-size: 15px;
   font-weight: 600;
   color: #444;
 }
- 
+
 .mapCoords {
   font-size: 13px;
   color: #777;
 }
- 
+
 .divider {
   border: none;
   border-top: 1.5px solid #f0eef8;
   margin-bottom: 28px;
 }
- 
+
 .descTitle {
   font-size: 20px;
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 12px;
 }
- 
+
 .descText {
   font-size: 15px;
   color: #555;
   line-height: 1.7;
 }
- 
+
 @media (max-width: 768px) {
   .root {
     padding: 16px;
   }
- 
+
   .heroImage,
   .heroPlaceholder {
     height: 220px;
     border-radius: 10px;
   }
- 
+
   .card {
     padding: 20px 16px;
   }
- 
+
   .eventTitle {
     font-size: 22px;
   }
- 
+
   .infoMapRow {
     grid-template-columns: 1fr;
     gap: 24px;
   }
- 
+
   .mapBox {
     min-height: 160px;
   }
- 
+
   .editBtn {
     width: 100%;
     justify-content: center;
   }
- 
+
   .topRow {
     flex-direction: column;
     align-items: flex-start;
   }
 }
- 
+
 @media (max-width: 480px) {
   .heroImage,
   .heroPlaceholder {
     height: 180px;
   }
- 
+
   .eventTitle {
     font-size: 18px;
   }
- 
+
   .infoIcon {
     font-size: 17px;
   }
 }
- 
+
 .wrapper {
   background: #fff;
   border-radius: 20px;
@@ -251,7 +256,7 @@
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
   margin-top: 25px;
 }
- 
+
 .back {
   display: inline-flex;
   align-items: center;
@@ -265,25 +270,25 @@
   color: #175dfc;
   font-weight: 500;
 }
- 
+
 .back:hover {
   color: #1a1a2e;
 }
- 
+
 .heroWrap {
   width: 100%;
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: 20px;
 }
- 
+
 .heroImg {
   width: 100%;
   height: 320px;
   object-fit: cover;
   display: block;
 }
- 
+
 .topRow {
   display: flex;
   justify-content: space-between;
@@ -292,16 +297,16 @@
   flex-wrap: wrap;
   gap: 10px;
 }
- 
+
 .category {
-  background: #f0eaff;
+  background: #EEF3FF;
   color: #175dfc;
   font-size: 13px;
   font-weight: 600;
   padding: 5px 14px;
   border-radius: 20px;
 }
- 
+
 .joinBtn {
   background: #175dfc;
   color: #fff;
@@ -313,18 +318,18 @@
   cursor: pointer;
   transition: background 0.2s;
 }
- 
+
 .joinBtn:hover {
   background: #163e9b;
 }
- 
+
 .title {
   font-size: 26px;
   font-weight: 800;
   color: #1a1a2e;
   margin-bottom: 24px;
 }
- 
+
 .infoRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -332,57 +337,57 @@
   align-items: start;
   margin-bottom: 12px;
 }
- 
+
 .details {
   display: flex;
   flex-direction: column;
   gap: 22px;
 }
- 
+
 .detailItem {
   display: flex;
   align-items: flex-start;
   gap: 14px;
 }
- 
+
 .detailIcon {
   font-size: 18px;
   color: #175dfc;
   margin-top: 3px;
   flex-shrink: 0;
 }
- 
+
 .detailLabel {
   font-size: 13px;
   font-weight: 700;
   color: #1a1a2e;
   margin: 0 0 3px 0;
 }
- 
+
 .detailValue {
   font-size: 14px;
   color: #444;
   margin: 0;
 }
- 
+
 .detailSub {
   font-size: 12px;
   color: #175dfc;
   margin: 3px 0 0 0;
 }
- 
+
 .eventDates {
   display: flex;
   gap: 16px;
   width: 100%;
   flex-wrap: wrap;
 }
- 
+
 .endDate {
   border-left: 2px solid #ddd;
   padding-left: 16px;
 }
- 
+
 .mapBox {
   background: #e9ecef;
   border-radius: 12px;
@@ -393,122 +398,137 @@
   justify-content: center;
   gap: 8px;
 }
- 
+
 .mapIcon {
   font-size: 40px;
   color: #555;
 }
- 
+
 .mapLabel {
   font-size: 15px;
   font-weight: 600;
   color: #333;
   margin: 0;
 }
- 
+
 .mapCoords {
   font-size: 13px;
   color: #666;
   margin: 0;
 }
- 
+
 .divider {
   height: 1px;
   background: #eee;
   margin-bottom: 24px;
   border: none;
 }
- 
+
 .aboutTitle {
   font-size: 18px;
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 10px;
 }
- 
+
 .aboutText {
   font-size: 14px;
   color: #555;
   line-height: 1.8;
   margin: 0;
 }
- 
+
 @media (max-width: 768px) {
   .wrapper {
     padding: 16px;
     margin-top: 16px;
     border-radius: 14px;
   }
- 
+
   .heroImg {
     height: 220px;
   }
- 
+
   .title {
     font-size: 20px;
   }
- 
+
   .infoRow {
     grid-template-columns: 1fr;
     gap: 20px;
   }
- 
+
   .mapBox {
     height: 180px;
   }
- 
+
   .joinBtn {
     width: 100%;
     text-align: center;
   }
- 
-  .topRow {
+
+  /* .topRow {
     flex-direction: column;
     align-items: flex-start;
+  } */
+  .topRow {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+  }
+  .joinBtn {
+    padding: 6px 8px;
+    font-size: 12px;
+    width: 90px;
+    font-weight: 500;
   }
 }
- 
+
 @media (max-width: 480px) {
   .heroImg {
     height: 180px;
     border-radius: 10px;
   }
- 
+
   .title {
     font-size: 18px;
     margin-bottom: 16px;
   }
- 
+
   .detailItem {
     gap: 10px;
   }
- 
+
   .detailIcon {
     font-size: 16px;
   }
- 
+
   .eventDates {
     flex-direction: column;
     gap: 10px;
   }
- 
+
   .endDate {
     border-left: none;
     padding-left: 0;
     border-top: 2px solid #ddd;
     padding-top: 10px;
   }
- 
+
   .mapBox {
     height: 150px;
   }
- 
+
   .aboutTitle {
     font-size: 16px;
   }
- 
+
   .aboutText {
     font-size: 13px;
   }
+  .topRow {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+  }
 }
- 

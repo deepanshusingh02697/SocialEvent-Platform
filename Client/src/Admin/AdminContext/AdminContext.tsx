@@ -17,7 +17,6 @@ export const EditIdContextProvider = ({
   const setUpdateId = (id: string | null) => {
     setEditId(id);
   };
-  console.log("editId is : ", editId);
 
   const setmaplatlongFunc = (lat: number | null, long: number | null) => {
     setIsmaplatitude(lat);

@@ -450,8 +450,6 @@ export const resolvers = {
           data: { email: user.email, otp: emailOtp, expiresAt },
         });
         console.log("Email OTP saved in DB:", emailOtp);
-
-        // send via SendGrid
         const emailRes = await sgMail.send({
           to: user.email,
           from: process.env.TWILIO_SENDGRID_FROM_EMAIL!,
